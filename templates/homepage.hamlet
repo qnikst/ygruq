@@ -1,9 +1,13 @@
 <h1>_{MsgHello}
 
-<br>
+<hr>
    <a href=@{QuoteListR}>List all quotes
+   <br>
+   <a href=@{QuoteAbyssListR}>List all quotes
+   <br>
    <a href=@{QuoteCreateR}>Create quote
-<br>
+   <br>
+<hr>
 <ol>
   <li>Now that you have a working project you should use the #
     \<a href="http://www.yesodweb.com/book/">Yesod book</a> to learn more. #
