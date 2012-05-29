@@ -8,4 +8,12 @@ Email
     verkey Text Maybe
     UniqueEmail email
 
+Quote
+    author Text
+    sender Text
+    source Text
+    prooflink Text
+    text   Text
+    timestamp UTCTime
+    approved  Bool sql=is_approved default=False
  -- By default this file is used in Model.hs (which is imported by Foundation.hs)

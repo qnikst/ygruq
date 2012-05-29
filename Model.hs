@@ -3,6 +3,7 @@ module Model where
 import Prelude
 import Yesod
 import Data.Text (Text)
+import Data.Time
 import Database.Persist.Quasi
 
 
