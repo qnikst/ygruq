@@ -7,8 +7,14 @@ postQuoteCreateR :: Handler RepHtml
 postQuoteCreateR = undefined
 getQuoteCreateR  :: Handler RepHtml
 getQuoteCreateR  = undefined
+
 getQuoteListR    :: Handler RepHtml
-getQuoteListR    = undefined
+getQuoteListR    = do
+    quotes <- runDB $ selectList [QuoteApproved ==. True] []
+    defaultLayout $ do
+        $(widgetFile "quote-list")
+
+
 getQuoteListPageR:: Int -> Handler RepHtml
 getQuoteListPageR page = undefined
 getQuoteAbyssListR:: Handler RepHtml
