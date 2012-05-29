@@ -1,8 +1,8 @@
-/quote/create         QuoteCreateR    GET POST                                   
-/quote/list           QuoteListR      GET                                        
-/quote/list/#Int      QuoteListPageR  GET                                        
-/quote/abyss/         QuoteAbyssR     GET                                        
-/quote/abyss/#Int     QuoteAbyssPageR GE
+/quote/create         QuoteCreateR    GET POST
+/quote/list           QuoteListR      GET
+/quote/list/#Int      QuoteListPageR  GET
+/quote/abyss/         QuoteAbyssListR     GET
+/quote/abyss/#Int     QuoteAbyssListPageR GET
 
 /static StaticR Static getStatic
 /auth   AuthR   Auth   getAuth

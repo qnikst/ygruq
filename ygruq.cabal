@@ -29,6 +29,7 @@ library
                      Settings.StaticFiles
                      Settings.Development
                      Handler.Home
+                     Handler.Quote
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
@@ -74,6 +75,7 @@ library
                  , http-conduit                  >= 1.4        && < 1.5
                  , directory                     >= 1.1        && < 1.2
                  , warp                          >= 1.2        && < 1.3
+                 , time                          >= 1.4
 
 executable         ygruq
     if flag(library-only)
