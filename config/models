@@ -13,7 +13,7 @@ Quote
     sender Text Maybe
     source LinkSource 
     prooflink Text
-    text   Text
+    text   Textarea
     timestamp UTCTime
     approved  Bool sql=is_approved default=False
  -- By default this file is used in Model.hs (which is imported by Foundation.hs)

@@ -4,23 +4,27 @@ module Handler.Quote
 import Import
 import Data.Time
 
-quoteAForm :: Maybe Quote -> IO (AForm App App Quote)
-quoteAForm mquote = liftIO getCurrentTime >>= \time ->
-    return $ 
-        Quote 
-        <$> aopt textField "Отправитель" (quoteSender <$> mquote)
-        <*> aopt textField "Автор"       (quoteAuthor <$> mquote)
-        <*> areq (selectFieldList sources) "Место" (quoteSource <$> mquote)
-        <*> areq textField "Текст"       (quoteText   <$> mquote)
-        <*> areq textField "Ссылка"      (quoteProoflink <$> mquote)
-        <*> pure time 
-        <*> pure False
-        where sources = [("Gentoo.Ru",Gru)
-                        ,("gentoo@conference.gentoo.ru",GruConf)
-                        ,("gentoo@conference.jabber.ru",JRuConf)
-                        ,("gentoo-user-ru@lists.gentoo.org",RuMail)
-                        ,("ru.gentoo-wiki.com",RuWiki)
-                        ,("Другое",OtherSource)]
+instance RenderMessage App LinkSource where
+    renderMessage _ _ Gru = "Gentoo.ru"
+    renderMessage _ _ _   = "Other"
+
+
+quoteAForm :: UTCTime -> Maybe Quote -> AForm App App Quote
+quoteAForm time mquote = Quote 
+            <$> aopt textField "Отправитель" (quoteSender <$> mquote)
+            <*> aopt textField "Автор"       (quoteAuthor <$> mquote)
+            <*> areq (selectFieldList sources) "Место" (quoteSource <$> mquote)
+            <*> areq textField "Ссылка"      (quoteProoflink <$> mquote)
+            <*> areq textareaField "Текст"   (quoteText   <$> mquote)
+            <*> pure time 
+            <*> pure False
+        where 
+            sources = [("gentoo.ru",Gru)
+                      ,("gentoo@conference.gentoo.ru",GruConf)
+                      ,("gentoo@conference.jabber.ru",JRuConf)
+                      ,("gentoo-user-ru@lists.gentoo.org",RuMail)
+                      ,("ru.gentoo-wiki.com",RuWiki)
+                      ,("Другое",OtherSource)]
 
 
 
