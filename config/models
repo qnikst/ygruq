@@ -9,9 +9,9 @@ Email
     UniqueEmail email
 
 Quote
-    author Text
-    sender Text
-    source Text
+    author Text Maybe
+    sender Text Maybe
+    source LinkSource 
     prooflink Text
     text   Text
     timestamp UTCTime
