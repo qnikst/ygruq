@@ -1,0 +1,13 @@
+/quote/create         QuoteCreateR    GET POST                                   
+/quote/list           QuoteListR      GET                                        
+/quote/list/#Int      QuoteListPageR  GET                                        
+/quote/abyss/         QuoteAbyssR     GET                                        
+/quote/abyss/#Int     QuoteAbyssPageR GE
+
+/static StaticR Static getStatic
+/auth   AuthR   Auth   getAuth
+
+/favicon.ico FaviconR GET
+/robots.txt RobotsR GET
+
+/ HomeR GET POST
