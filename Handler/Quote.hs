@@ -60,6 +60,7 @@ getQuoteCreateR  = do
 
 getQuoteListR    :: Handler RepHtml
 getQuoteListR    = do
+    let maid = Nothing
     quotes <- runDB $ selectList [QuoteApproved ==. True] []
     defaultLayout $ do
         $(widgetFile "quote-list")
@@ -70,7 +71,7 @@ getQuoteListPageR page = undefined
 
 getQuoteAbyssListR :: Handler RepHtml
 getQuoteAbyssListR = do
-    maid <- maybeAuthId
+    maid <- maybeAuth
     quotes <- runDB $ selectList [] []
     defaultLayout $ do
         $(widgetFile "quote-list")
