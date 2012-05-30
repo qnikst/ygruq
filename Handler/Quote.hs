@@ -3,10 +3,18 @@ module Handler.Quote
 
 import Import
 import Data.Time
+import Data.Text (pack)
+import Control.Applicative
+import Control.Arrow
+import Text.Blaze
 
-instance RenderMessage App LinkSource where
-    renderMessage _ _ Gru = "Gentoo.ru"
-    renderMessage _ _ _   = "Other"
+instance ToMarkup LinkSource where
+    toMarkup (Gru) = "Gentoo.ru"
+    toMarkup GruConf = "getnoo@conference.gentoo.ru"
+    toMarkup JRuConf = "gentoo@conference.jabber.ru"
+    toMarkup RuMail  = "gentoo-user-ru@lists.gentoo.org"
+    toMarkup RuWiki  = "ru.gentoo-wiki.com"
+    toMarkup OtherSource = "Другое"
 
 
 quoteAForm :: UTCTime -> Maybe Quote -> AForm App App Quote
@@ -14,11 +22,12 @@ quoteAForm time mquote = Quote
             <$> aopt textField "Отправитель" (quoteSender <$> mquote)
             <*> aopt textField "Автор"       (quoteAuthor <$> mquote)
             <*> areq (selectFieldList sources) "Место" (quoteSource <$> mquote)
-            <*> areq textField "Ссылка"      (quoteProoflink <$> mquote)
+            <*> areq urlField "Ссылка"      (quoteProoflink <$> mquote)
             <*> areq textareaField "Текст"   (quoteText   <$> mquote)
             <*> pure time 
             <*> pure False
         where 
+            sources :: [(Text,LinkSource)]
             sources = [("gentoo.ru",Gru)
                       ,("gentoo@conference.gentoo.ru",GruConf)
                       ,("gentoo@conference.jabber.ru",JRuConf)
@@ -28,12 +37,26 @@ quoteAForm time mquote = Quote
 
 
 
-
-
 postQuoteCreateR :: Handler RepHtml
-postQuoteCreateR = undefined
+postQuoteCreateR = do
+    time <- liftIO getCurrentTime
+    ((result,widget),enctype) <- runFormPost $ renderTable $ quoteAForm time Nothing
+    case result of
+        FormSuccess quote -> do
+            quoteId <- runDB $ insert quote
+            defaultLayout $ do
+                $(widgetFile "quote-show")
+        _other -> do 
+            defaultLayout $ do
+                $(widgetFile "quote-create")
+
 getQuoteCreateR  :: Handler RepHtml
-getQuoteCreateR  = undefined
+getQuoteCreateR  = do
+    time <- liftIO $ getCurrentTime
+    (widget,enctype) <- generateFormPost $ renderTable $ quoteAForm time Nothing
+    defaultLayout $ do
+        $(widgetFile "quote-create")
+
 
 getQuoteListR    :: Handler RepHtml
 getQuoteListR    = do
@@ -47,6 +70,7 @@ getQuoteListPageR page = undefined
 
 getQuoteAbyssListR :: Handler RepHtml
 getQuoteAbyssListR = do
+    maid <- maybeAuthId
     quotes <- runDB $ selectList [] []
     defaultLayout $ do
         $(widgetFile "quote-list")
