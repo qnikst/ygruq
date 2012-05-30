@@ -1,12 +1,20 @@
+{-# LANGUAGE ScopedTypeVariables #-}
 module Handler.Quote
     where
 
+import Prelude (head)
 import Import
 import Data.Time
-import Data.Text (pack)
+import Data.Text (pack, unpack, append)
 import Control.Applicative
 import Control.Arrow
 import Text.Blaze
+import Text.Hamlet (shamlet)
+import Yesod.Feed
+import Yesod.Default.Config (appExtra)
+
+
+data QuotePage = Approved | Abyss | Create
 
 instance ToMarkup LinkSource where
     toMarkup (Gru) = "Gentoo.ru"
@@ -40,7 +48,7 @@ quoteAForm time mquote = Quote
 postQuoteCreateR :: Handler RepHtml
 postQuoteCreateR = do
     time <- liftIO getCurrentTime
-    ((result,widget),enctype) <- runFormPost $ renderTable $ quoteAForm time Nothing
+    ((result,formWidget),enctype) <- runFormPost $ renderTable $ quoteAForm time Nothing
     case result of
         FormSuccess quote -> do
             quoteId <- runDB $ insert quote
@@ -50,36 +58,85 @@ postQuoteCreateR = do
             defaultLayout $ do
                 $(widgetFile "quote-create")
 
+
+
+
 getQuoteCreateR  :: Handler RepHtml
 getQuoteCreateR  = do
+    let pageType = Create
     time <- liftIO $ getCurrentTime
-    (widget,enctype) <- generateFormPost $ renderTable $ quoteAForm time Nothing
+    (formWidget,enctype) <- generateFormPost $ renderTable $ quoteAForm time Nothing
     defaultLayout $ do
+        $(widgetFile "quote-list-wrapper")
         $(widgetFile "quote-create")
 
 
 getQuoteListR    :: Handler RepHtml
 getQuoteListR    = do
     let maid = Nothing
+        pageType = Approved
     quotes <- runDB $ selectList [QuoteApproved ==. True] []
     defaultLayout $ do
+        $(widgetFile "quote-list-wrapper")
         $(widgetFile "quote-list")
 
 
 getQuoteListPageR:: Int -> Handler RepHtml
 getQuoteListPageR page = undefined
 
+getQuoteShowR :: QuoteId -> Handler RepHtml
+getQuoteShowR = undefined
+
 getQuoteAbyssListR :: Handler RepHtml
 getQuoteAbyssListR = do
     maid <- maybeAuth
-    quotes <- runDB $ selectList [] []
+    let pageType = Abyss
+    quotes <- runDB $ selectList [QuoteApproved==.False] [Asc QuoteTimestamp]
     defaultLayout $ do
+        $(widgetFile "quote-list-wrapper")
         $(widgetFile "quote-list")
 
-getQuoteAbyssListPageR::Int-> Handler RepHtml
-getQuoteAbyssListPageR  page  = undefined
+postQuoteAbyssProcessR :: Handler RepHtml
+postQuoteAbyssProcessR = do
+    toDelete  <- lookupPostParam "delete"
+    toApprove <- lookupPostParam "approve"
+    qLst      <- lookupPostParams "abyss"
+    let qlst' = map (Key . read . unpack) qLst 
+    case (toDelete,toApprove) of
+        (Just _, Nothing) -> delete' qlst'
+        (Nothing, Just _) -> approve' qlst'
+        (_,_)             -> do
+            setMessage [shamlet|Invalid command|]
+    toMaster <- getRouteToMaster
+    redirect $ toMaster QuoteAbyssListR
+    where
+        delete' list = do
+            runDB $ mapM delete list
+            setMessage [shamlet|Цитаты были удалены|]
+        approve' list = do  
+            runDB $ mapM (flip update [QuoteApproved =. True]) list
+            setMessage [shamlet|Цитаты были опубликованы|]
 
-
--- getQuotesList :: Maybe Int -> Bool -> Entity
---listQuotes mpage True  = runDB $ selectList [QuoteApproved ==.True] []
---listQuotes mpage False = runDB $ selectList [] []
+getQuoteFeedR :: Handler RepAtomRss
+getQuoteFeedR = do 
+    quotes <- runDB $ selectList [ QuoteApproved==.True]
+                                 [ Desc QuoteTimestamp
+                                 , LimitTo 100
+                                 ]
+    newsFeed Feed 
+        { feedTitle = "Gentoo.ru Quotes"
+        , feedLinkSelf = QuoteFeedR
+        , feedLinkHome = HomeR 
+        , feedDescription = "Description"
+        , feedLanguage = "ru"
+        , feedUpdated  = (quoteTimestamp $ entityVal $ head $ quotes)
+        , feedEntries  =  (map toFeed quotes)
+        }
+    where
+        toFeed (Entity i q) = 
+            FeedEntry 
+                { feedEntryLink    = QuoteShowR i
+                , feedEntryUpdated = quoteTimestamp q
+                , feedEntryTitle   = ("Цитата №" `append` (toPathPiece i))
+                , feedEntryContent = (toHtml $ quoteText q)
+                }

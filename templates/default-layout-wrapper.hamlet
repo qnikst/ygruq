@@ -24,6 +24,9 @@
     <body>
         <div class="container">
             <header>
+              <div style="float: right;">
+                <a href=@{HomeR}>в начало
+              <h1> Gentoo.Ru fortunes
             <div id="main" role="main">
               ^{pageBody pc}
             <footer>

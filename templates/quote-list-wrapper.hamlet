@@ -1,0 +1,30 @@
+<div .menu>
+  $case pageType
+      $of Approved
+          <h3>
+            [Утвержденные цитаты]
+            [
+            <a href=@{QuoteAbyssListR}>Неутверждённые цитаты
+            ]
+            [
+            <a href=@{QuoteCreateR}>Добавить цитату
+            ]
+      $of Abyss
+          <h3>
+            [
+            <a href=@{QuoteListR}>Уверждённые цитаты
+            ]
+            [Неутверждённые цитаты]
+            [
+            <a href=@{QuoteCreateR}>Добавить цитату
+            ]
+      $of Create
+          <h3>
+            [
+            <a href=@{QuoteListR}>Уверждённые цитаты
+            ]
+            [
+            <a href=@{QuoteAbyssListR}>Неутверждённые цитаты
+            ]
+            [Добавить цитату]
+
