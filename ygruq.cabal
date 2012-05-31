@@ -25,6 +25,7 @@ library
                      Foundation
                      Import
                      Model
+                     Model.Tarball
                      Settings
                      Settings.StaticFiles
                      Settings.Development
@@ -78,6 +79,9 @@ library
                  , time                          >= 1.4
                  , blaze-markup                  >= 0.5
                  , yesod-newsfeed
+                 , conduit 
+                 , zlib-conduit 
+                 , time-lens 
 
 executable         ygruq
     if flag(library-only)

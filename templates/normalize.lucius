@@ -442,3 +442,12 @@ h1 {
     text-align: center
 }
 
+.quote {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    padding: 5px;
+    border: 1px dashed #CACACA;
+}
+.quote pre {
+    margin: 7px;
+}

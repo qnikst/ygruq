@@ -1,12 +1,9 @@
-<p> Цитаты с форума 
-  <a href="http://gentoo.ru/forum">gentoo.ru
-  \ и из xmpp:gentoo@conference.gentoo.ru
 
 <h2> Лицензия
 <p>Все права на цитаты принадлежат их авторам. Права на любые упомянутые
   торговые марки принадлежат соответствующим лицам или компаниям.
-<p>Цитаты распространяются по принципу КАК ЕСТЬ (AS-IS), без каких-либо
-  гарантий (явных или подразумеваемых).
+<p>Цитаты распространяются по принципу КАК ЕСТЬ (AS-IS), без каких-либо 
+   гарантий (явных или подразумеваемых).
 
 <h2> Версии
 
@@ -20,7 +17,8 @@
    RSS
   .
 
-<p> Кроме того, в <a href=@{QuoteAbyssListR}>очереди на рассмотрение</a> находятся ... цитат(ы).
+<p> Кроме того, в <a href=@{QuoteAbyssListR}>очереди на рассмотрение</a> находятся 
+  #{notApproved} цитат(ы).
 
 <p><strong>Ebuild</strong>'ы ищите в оверлее <b><a href="http://code.google.com/p/rion-overlay">rion</a></b>  
   или качайте <a href="http://code.google.com/p/rion-overlay/source/browse/#hg/games-misc/fortune-mod-gentoo-ru">здесь</a>. 

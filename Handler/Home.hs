@@ -17,7 +17,8 @@ quoteCreate formWidget enctype = $(widgetFile "quote-create")
 
 getHomeR :: Handler RepHtml
 getHomeR = do
-    time <- liftIO $ getCurrentTime
+    time <- liftIO $ zonedTimeToUTC <$> getZonedTime
+    notApproved <- runDB $ count [QuoteApproved ==. False]
     (formWidget,enctype) <- generateFormPost $ renderTable $ quoteAForm time Nothing
     defaultLayout $ do
         aDomId <- lift newIdent

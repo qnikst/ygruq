@@ -1,1 +1,14 @@
-#{quoteText quote}
+<div .quote> 
+    <pre>#{unTextarea (quoteText quote)}
+      \
+      \            -- 
+      $maybe author <- quoteAuthor quote
+        author
+      (#{quoteSource quote})
+    <a href=#{quoteProoflink quote}>пруфлинк
+    \ цитату прислал 
+    $maybe sender <- quoteSender quote
+      #{sender} 
+    $nothing
+      анонимный друг 
+    (#{showTime (quoteTimestamp quote)})

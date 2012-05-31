@@ -16,4 +16,10 @@ Quote
     text   Textarea
     timestamp UTCTime
     approved  Bool sql=is_approved default=False
+
+Tarball
+    filename  Text
+    version   Text
+    timestamp UTCTime
+
  -- By default this file is used in Model.hs (which is imported by Foundation.hs)

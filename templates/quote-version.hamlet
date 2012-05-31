@@ -1,0 +1,14 @@
+<table>
+  <thead>
+    <tr>
+      <td>Ссылка
+      <td>Версия
+      <td>Время создания
+  <tbody>
+    $forall Entity versionId version <- versions
+    <tr>
+      <td>
+        <a href="/static/files/#{versionFilepath version}">#{versionName version}
+      <td>#{versionNumber version}
+      <td>#{versionTimestamp version}
+

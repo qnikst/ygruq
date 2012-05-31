@@ -27,6 +27,9 @@
               <div style="float: right;">
                 <a href=@{HomeR}>в начало
               <h1> Gentoo.Ru fortunes
+              <p> Цитаты с форума 
+                     <a href="http://gentoo.ru/forum">gentoo.ru 
+                     и из <a href="xmpp://gentoo@conference.gentoo.ru">xmpp:gentoo@conference.gentoo.ru</a>
             <div id="main" role="main">
               ^{pageBody pc}
             <footer>

@@ -1,17 +1,22 @@
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE ScopedTypeVariables, OverloadedStrings #-}
 module Handler.Quote
     where
 
 import Prelude (head)
 import Import
 import Data.Time
+import Data.Time.Lens
+import Data.Time.LocalTime
 import Data.Text (pack, unpack, append)
+import Data.Maybe
 import Control.Applicative
 import Control.Arrow
+import Control.Monad
 import Text.Blaze
 import Text.Hamlet (shamlet)
 import Yesod.Feed
 import Yesod.Default.Config (appExtra)
+import Model.Tarball
 
 
 data QuotePage = Approved | Abyss | Create
@@ -24,6 +29,15 @@ instance ToMarkup LinkSource where
     toMarkup RuWiki  = "ru.gentoo-wiki.com"
     toMarkup OtherSource = "Другое"
 
+
+
+showQuote quote = $(whamletFile "templates/quote-show.hamlet")
+
+showTime  utc   = 
+    let (y,m,d) = getL gregorian utc
+        h       = getL hours     utc
+        i       = getL minutes   utc
+    in [shamlet| #{y}-#{m}-#{d} #{h}:#{i}|] 
 
 quoteAForm :: UTCTime -> Maybe Quote -> AForm App App Quote
 quoteAForm time mquote = Quote 
@@ -47,15 +61,27 @@ quoteAForm time mquote = Quote
 
 postQuoteCreateR :: Handler RepHtml
 postQuoteCreateR = do
-    time <- liftIO getCurrentTime
-    ((result,formWidget),enctype) <- runFormPost $ renderTable $ quoteAForm time Nothing
+    let pageType = Create
+    time <- liftIO $ zonedTimeToUTC <$> getZonedTime
+    ((result,formWidget),enctype) <- runFormPost $ renderDivs $ quoteAForm time Nothing
+    showOnly <- lookupPostParam "show"
     case result of
         FormSuccess quote -> do
-            quoteId <- runDB $ insert quote
+            case showOnly of
+                   Just _ -> do
+                       setMessage [shamlet|Просмотр цитаты <strong>цитата не добавлена</strong>|] 
+                   Nothing -> do 
+                       quoteId  <- runDB (insert quote)
+                       setMessage [shamlet|Цитата была успешно добавлена|]
+                       toMaster <- getRouteToMaster
+                       redirect $ toMaster $ QuoteShowR quoteId
             defaultLayout $ do
+                $(widgetFile "quote-list-wrapper")
                 $(widgetFile "quote-show")
+                when (isJust showOnly) $ $(widgetFile "quote-create")
         _other -> do 
             defaultLayout $ do
+                $(widgetFile "quote-list-wrapper")
                 $(widgetFile "quote-create")
 
 
@@ -64,7 +90,7 @@ postQuoteCreateR = do
 getQuoteCreateR  :: Handler RepHtml
 getQuoteCreateR  = do
     let pageType = Create
-    time <- liftIO $ getCurrentTime
+    time <- liftIO $ zonedTimeToUTC <$> getZonedTime
     (formWidget,enctype) <- generateFormPost $ renderTable $ quoteAForm time Nothing
     defaultLayout $ do
         $(widgetFile "quote-list-wrapper")
@@ -85,13 +111,18 @@ getQuoteListPageR:: Int -> Handler RepHtml
 getQuoteListPageR page = undefined
 
 getQuoteShowR :: QuoteId -> Handler RepHtml
-getQuoteShowR = undefined
+getQuoteShowR quoteId = do
+    quote <- runDB $ get404 quoteId
+    let pageType = if quoteApproved quote then Approved else Abyss
+    defaultLayout $ do
+        $(widgetFile "quote-list-wrapper")
+        $(widgetFile "quote-show")
 
 getQuoteAbyssListR :: Handler RepHtml
 getQuoteAbyssListR = do
     maid <- maybeAuth
     let pageType = Abyss
-    quotes <- runDB $ selectList [QuoteApproved==.False] [Asc QuoteTimestamp]
+    quotes <- runDB $ selectList [QuoteApproved ==. False] [Asc QuoteTimestamp]
     defaultLayout $ do
         $(widgetFile "quote-list-wrapper")
         $(widgetFile "quote-list")
