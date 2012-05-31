@@ -31,6 +31,7 @@ library
                      Settings.Development
                      Handler.Home
                      Handler.Quote
+                     Yesod.Pagination
 
     if flag(dev) || flag(library-only)
         cpp-options:   -DDEVELOPMENT
