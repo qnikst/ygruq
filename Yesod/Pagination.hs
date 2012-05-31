@@ -43,6 +43,8 @@ data Page = Skip | This | Page Int
 
 defaultRender p n l =do
     addCassius [cassius|
+      div.pager
+        text-align: center;
       ul.pagination
         margin: 5px 0px;
         padding: 0px;
@@ -64,22 +66,22 @@ defaultRender p n l =do
         nex = p + 1
         pages  = setSpace $ nub $ filter ((>)n) $ filter ((<)0) ([1..e]++[(p-r)..(p+r)]++[(n-e)..n])
     [whamlet|
-      <ul .pagination>
-        $if (>) p 1
-         <li .previous_page_more>
-           <a href=@{l pre}>&lt;
-        $forall v <- pages
-          $case v
-            $of This
-              <li .this_page><a>#{p}</a>
-            $of Page k
-              <li>
-                <a href=@{l k}>#{k}
-            $of Skip
-              <li><a>...</a>
-        $if (<) nex n
-         <li .next_page>
-           <a href=@{l nex}>&gt;
+        <ul .pagination>
+          $if (>) p 1
+           <li .previous_page_more>
+             <a href=@{l pre}>&lt;
+          $forall v <- pages
+            $case v
+              $of This
+                <li .this_page><a>#{p}</a>
+              $of Page k
+                <li>
+                  <a href=@{l k}>#{k}
+              $of Skip
+                <li><a>...</a>
+          $if (<) nex n
+           <li .next_page>
+             <a href=@{l nex}>&gt;
     |]
     where 
         setSpace (x1:[])    | x1 == p      = [This]
