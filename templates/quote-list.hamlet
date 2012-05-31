@@ -1,3 +1,4 @@
+^{pager}
 $maybe _ <- maid
   <form action=@{QuoteAbyssProcessR} method=post>
     $forall Entity quoteId quote <- quotes

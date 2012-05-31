@@ -16,7 +16,19 @@ import Text.Blaze
 import Text.Hamlet (shamlet)
 import Yesod.Feed
 import Yesod.Default.Config (appExtra)
+import Yesod.Pagination
 import Model.Tarball
+
+
+
+-- | Pagination
+quotePager = PaginationData 
+    { paginationPerPage = 10
+    , paginationLink = QuoteListPageR
+    , paginationRender = defaultRender
+    }
+
+
 
 -- | Menu
 data QuotePage = Approved | Abyss | Create
@@ -100,14 +112,20 @@ getQuoteListR    :: Handler RepHtml
 getQuoteListR    = do
     let maid = Nothing
         pageType = Approved
-    quotes <- runDB $ selectList [QuoteApproved ==. True] [Desc QuoteTimestamp]
+    (quotes,pager) <- generate quotePager 0 [QuoteApproved ==. True] []
     defaultLayout $ do
         $(widgetFile "quote-list-wrapper")
         $(widgetFile "quote-list")
 
 
 getQuoteListPageR:: Int -> Handler RepHtml
-getQuoteListPageR page = undefined
+getQuoteListPageR page = do
+    let maid = Nothing
+        pageType = Approved
+    (quotes,pager) <- generate quotePager page [QuoteApproved ==. True] []
+    defaultLayout $ do
+        $(widgetFile "quote-list-wrapper")
+        $(widgetFile "quote-list")
 
 getQuoteShowR :: QuoteId -> Handler RepHtml
 getQuoteShowR quoteId = do
@@ -121,7 +139,7 @@ getQuoteAbyssListR :: Handler RepHtml
 getQuoteAbyssListR = do
     maid <- maybeAuth
     let pageType = Abyss
-    quotes <- runDB $ selectList [QuoteApproved ==. False] [Asc QuoteTimestamp]
+    (quotes,pager) <- generate quotePager 0 [QuoteApproved ==. False] []
     defaultLayout $ do
         $(widgetFile "quote-list-wrapper")
         $(widgetFile "quote-list")
