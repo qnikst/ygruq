@@ -21,7 +21,7 @@ createFile = do
         a <- count [QuoteApproved ==. True]
         b <- selectFirst [] [ Desc TarballTimestamp]
         return (a,maybe 0 (tarballNumquotes.entityVal) b)
-    when (qC>vC) $ do
+    when (qC>vC+32) $ do
          time <- liftIO $ getCurrentTime
          let y = getL year time
              m = getL month time

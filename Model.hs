@@ -8,6 +8,10 @@ import Database.Persist.Quasi
 import Text.Blaze
 
 data LinkSource = Gru | GruConf | JRuConf | RuMail | RuWiki | OtherSource
+                | Awesome
+                | GruTalks
+                | GruRion
+                | LOR
     deriving (Show, Read, Eq, Enum, Bounded)
 derivePersistField "LinkSource"
 

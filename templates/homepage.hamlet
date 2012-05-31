@@ -13,7 +13,7 @@
   <a href=@{QuoteListR}>посмотреть все цитаты
   , вошедшие в версии 9999. Также они доступны через 
   <a href=@{QuoteFeedR}>
-   <img src=/img/icon-rss.png" alt="RSS"/>
+   <img src="/static/img/icon-rss.png" alt="RSS"/>
    RSS
   .
 
@@ -75,4 +75,7 @@
 <p>Информацию об обнаруженных проблемах, несовместимостях, нарушениях авторского права
   и прочих радостях жизни, а так же замечания/пожелания о работе данной странички просьба
   сообщать по одному из следующих адресов:
-
+   <ul>
+     <li>alexander&lt;dot&gt;version&lt;at&gt;gmail&lt;dot&gt;com 
+     <li>
+       <a href="https://github.com/qnikst/ygruq/issues">багтреккер

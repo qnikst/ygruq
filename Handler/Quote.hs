@@ -18,22 +18,25 @@ import Yesod.Feed
 import Yesod.Default.Config (appExtra)
 import Model.Tarball
 
-
+-- | Menu
 data QuotePage = Approved | Abyss | Create
 
 instance ToMarkup LinkSource where
     toMarkup (Gru) = "Gentoo.ru"
-    toMarkup GruConf = "getnoo@conference.gentoo.ru"
+    toMarkup GruConf = "gentoo@conference.gentoo.ru"
     toMarkup JRuConf = "gentoo@conference.jabber.ru"
     toMarkup RuMail  = "gentoo-user-ru@lists.gentoo.org"
     toMarkup RuWiki  = "ru.gentoo-wiki.com"
+    toMarkup Awesome = "awesome@c.g.r"
+    toMarkup GruTalks = "talks@c.g.r"
+    toMarkup GruRion  = "rion@c.g.r"
+    toMarkup LOR      = "linux.org.ru"
     toMarkup OtherSource = "Другое"
-
 
 
 showQuote quote = $(whamletFile "templates/quote-show.hamlet")
 
-
+-- | create quote form
 quoteAForm :: UTCTime -> Maybe Quote -> AForm App App Quote
 quoteAForm time mquote = Quote 
             <$> aopt textField "Отправитель" (quoteSender <$> mquote)
@@ -68,6 +71,7 @@ postQuoteCreateR = do
                    Nothing -> do 
                        quoteId  <- runDB (insert quote)
                        setMessage [shamlet|Цитата была успешно добавлена|]
+                       createFile
                        toMaster <- getRouteToMaster
                        redirect $ toMaster $ QuoteShowR quoteId
             defaultLayout $ do
@@ -96,7 +100,7 @@ getQuoteListR    :: Handler RepHtml
 getQuoteListR    = do
     let maid = Nothing
         pageType = Approved
-    quotes <- runDB $ selectList [QuoteApproved ==. True] []
+    quotes <- runDB $ selectList [QuoteApproved ==. True] [Desc QuoteTimestamp]
     defaultLayout $ do
         $(widgetFile "quote-list-wrapper")
         $(widgetFile "quote-list")
@@ -115,7 +119,6 @@ getQuoteShowR quoteId = do
 
 getQuoteAbyssListR :: Handler RepHtml
 getQuoteAbyssListR = do
-    createFile
     maid <- maybeAuth
     let pageType = Abyss
     quotes <- runDB $ selectList [QuoteApproved ==. False] [Asc QuoteTimestamp]
