@@ -19,7 +19,7 @@ Quote
 
 Tarball
     filename  Text
-    version   Text
+    numquotes Int
     timestamp UTCTime
 
  -- By default this file is used in Model.hs (which is imported by Foundation.hs)

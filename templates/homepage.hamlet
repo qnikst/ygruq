@@ -7,7 +7,7 @@
 
 <h2> Версии
 
-^versions
+^{versionCreate versions}
 
 <p> Вы можете 
   <a href=@{QuoteListR}>посмотреть все цитаты

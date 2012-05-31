@@ -33,11 +33,6 @@ instance ToMarkup LinkSource where
 
 showQuote quote = $(whamletFile "templates/quote-show.hamlet")
 
-showTime  utc   = 
-    let (y,m,d) = getL gregorian utc
-        h       = getL hours     utc
-        i       = getL minutes   utc
-    in [shamlet| #{y}-#{m}-#{d} #{h}:#{i}|] 
 
 quoteAForm :: UTCTime -> Maybe Quote -> AForm App App Quote
 quoteAForm time mquote = Quote 
@@ -120,6 +115,7 @@ getQuoteShowR quoteId = do
 
 getQuoteAbyssListR :: Handler RepHtml
 getQuoteAbyssListR = do
+    createFile
     maid <- maybeAuth
     let pageType = Abyss
     quotes <- runDB $ selectList [QuoteApproved ==. False] [Asc QuoteTimestamp]
