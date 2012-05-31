@@ -33,11 +33,9 @@ createFile = do
                     , tarballNumquotes = qC
                     , tarballTimestamp = time
                     }
-         r <- runDB $ do
-                insert t
-                selectList [QuoteApproved ==. True] []
-         CL.sourceList r  
-         -- selectSource [QuoteApproved ==. True] []
+         runDB $ do 
+            insert t
+            runResourceT $ selectSource [QuoteApproved ==. True] []
                 $= CL.map toText
                 $$ CL.map encodeUtf8
                 =$ gzip 
