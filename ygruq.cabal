@@ -82,6 +82,8 @@ library
                  , conduit 
                  , zlib-conduit 
                  , time-lens 
+                 , zlib
+                 , monad-control 
 
 executable         ygruq
     if flag(library-only)

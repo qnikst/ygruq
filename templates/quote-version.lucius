@@ -1,0 +1,18 @@
+.vtable th {
+   font-weight: bold;
+}
+
+.vtable td, 
+.vtable th {
+   padding: 3px;
+}
+
+.vtable td {
+   border-left: 1px solid black;
+   border-bottom: 1px solid black;
+}
+
+.vtable tr {
+   border-right: 1px solid black;
+   border-top: 1px solid black;
+}

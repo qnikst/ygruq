@@ -5,20 +5,22 @@ import Import
 import Data.Time
 import Handler.Quote
 
--- This is a handler function for the GET request method on the HomeR
--- resource pattern. All of your resource patterns are defined in
--- config/routes
---
--- The majority of the code you will write in Yesod lives in these handler
--- functions. You can spread them across multiple files if you are so
--- inclined, or create a single monolithic file.
-
+-- | form widget
 quoteCreate formWidget enctype = $(widgetFile "quote-create")
+
+-- | version list widget
+versionCreate versions = $(widgetFile "quote-version")
+
 
 getHomeR :: Handler RepHtml
 getHomeR = do
+    -- get database info
+    (notApproved,versions) <- runDB $ do
+        a <- count [QuoteApproved ==. False]
+        b <- selectList [] [Desc TarballTimestamp]
+        return (a,b)
+    -- create form widet
     time <- liftIO $ zonedTimeToUTC <$> getZonedTime
-    notApproved <- runDB $ count [QuoteApproved ==. False]
     (formWidget,enctype) <- generateFormPost $ renderTable $ quoteAForm time Nothing
     defaultLayout $ do
         aDomId <- lift newIdent
