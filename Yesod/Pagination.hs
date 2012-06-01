@@ -84,6 +84,7 @@ defaultRender p n l =do
              <a href=@{l nex}>&gt;
     |]
     where 
+        setSpace []                        = []
         setSpace (x1:[])    | x1 == p      = [This]
                             | otherwise    = [Page x1]
         setSpace (x1:x2:xs) | x1 == p      = This:setSpace (x2:xs)

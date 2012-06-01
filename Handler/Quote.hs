@@ -51,8 +51,8 @@ showQuote quote = $(whamletFile "templates/quote-show.hamlet")
 -- | create quote form
 quoteAForm :: UTCTime -> Maybe Quote -> AForm App App Quote
 quoteAForm time mquote = Quote 
-            <$> aopt textField "Отправитель" (quoteSender <$> mquote)
-            <*> aopt textField "Автор"       (quoteAuthor <$> mquote)
+            <$> aopt textField "Автор"       (quoteAuthor <$> mquote)
+            <*> aopt textField "Отправитель" (quoteSender <$> mquote)
             <*> areq (selectFieldList sources) "Место" (quoteSource <$> mquote)
             <*> areq urlField "Ссылка"      (quoteProoflink <$> mquote)
             <*> areq textareaField "Текст"   (quoteText   <$> mquote)
