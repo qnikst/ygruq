@@ -26,6 +26,7 @@ library
                      Import
                      Model
                      Model.Tarball
+                     Model.Quote
                      Settings
                      Settings.StaticFiles
                      Settings.Development

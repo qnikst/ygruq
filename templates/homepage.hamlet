@@ -45,25 +45,8 @@
 <p>Отдельная благодарность - товарищам, оказавшим помощь в составлении цитатника:
 <h3>За цитаты
 <ul>
-  <li>slepnoga
-  <li>krigstask
-  <li>NightNord
-  <li>winterheart
-  <li>tuupic
-  <li>Lupo Alberto
-  <li>sspphheerraa
-  <li>evadim
-  <li>eegorov
-  <li>Anarchist
-  <li>Pinkbyte
-  <li>ruda
-  <li>reonaydo
-  <li>alexxy
-  <li>maksbotan
-  <li>Skolzyashii
-  <li>tuupic
-  <li>WiseLord
-  <li>haku
+  $forall author <- authors
+    <li>#{author}
   <li><i>анонимные отправители</i>
   <li><i>все, кого я забыл здесь упомянуть</i>
 <h3>За идеи и поддержку
@@ -72,8 +55,8 @@
   <li>haku
   <li>Night Nord
 <h2><a name=contact></a>Обратная связь
-<p>Информацию об обнаруженных проблемах, несовместимостях, нарушениях авторского права
-  и прочих радостях жизни, а так же замечания/пожелания о работе данной странички просьба
+<p>Информацию об обнаруженных проблемах, несовместимостях, нарушениях авторского права   
+  и прочих радостях жизни, а так же замечания/пожелания по работе данной странички просьба 
   сообщать по одному из следующих адресов:
    <ul>
      <li>alexander&lt;dot&gt;vershilov&lt;at&gt;gmail&lt;dot&gt;com 

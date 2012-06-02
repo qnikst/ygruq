@@ -4,6 +4,7 @@ module Handler.Home where
 import Import
 import Data.Time
 import Handler.Quote
+import Model.Quote
 import Database.Persist.GenericSql.Raw
 
 -- | form widget
@@ -25,6 +26,7 @@ getHomeR = do
     -- create form widet
     time <- liftIO $ zonedTimeToUTC <$> getZonedTime
     (formWidget,enctype) <- generateFormPost $ renderTable $ quoteAForm time Nothing
+    authors <- getAuthorsList
     defaultLayout $ do
         aDomId <- lift newIdent
         setTitle "Welcome To Yesod!"
