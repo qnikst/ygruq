@@ -15,7 +15,7 @@ getAuthorsList :: forall master sub.
                   YesodPersistBackend master ~ SqlPersist) =>
                   GHandler sub master [Text]
 getAuthorsList = do 
-    let sql = "SELECT DISTINCT author FROM quotes WHERE is_approved = 1 AND author IS NOT NULL"
+    let sql = "SELECT  sender, count(id) as cnt FROM quotes WHERE is_approved = 1 AND sender IS NOT NULL GROUP by sender ORDER by cnt DESC"
     lst <- runDB $ runResourceT $ withStmt sql [] $$ CL.consume
     return $ catMaybes $ map (either (const Nothing) Just . convert .head) lst
     where convert = fromPersistValue 
