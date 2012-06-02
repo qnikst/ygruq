@@ -2,7 +2,7 @@
 $maybe _ <- maid
   <form action=@{QuoteAbyssProcessR} method=post>
     $forall Entity quoteId quote <- quotes
-        <input type=checkbox name=abyss value=#{show $ unKey quoteId}>
+        <input type=checkbox name=abyss value=#{toPathPiece quoteId}>
         ^{showQuote quote}
     <div>
       <input type=submit name=delete value=Удалить> 
