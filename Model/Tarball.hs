@@ -1,21 +1,25 @@
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE OverloadedStrings, RankNTypes #-}
 module Model.Tarball
     where
 
 import Import
-import Control.Monad.Trans.Control
 import Control.Monad
 import Data.Conduit
 import Data.Conduit.Binary
 import qualified Data.Conduit.List as CL
 import Data.Conduit.Zlib
+import Database.Persist.GenericSql.Raw
 import qualified Data.Text as S
 import Data.Text.Encoding (encodeUtf8)
-import Data.Maybe
 import Data.Time
 import Data.Time.Lens
 import Text.Printf
 
+
+createFile :: forall master sub.
+              (YesodPersist master, 
+              YesodPersistBackend master ~ SqlPersist) =>
+              GHandler sub master ()
 createFile = do
     (qC, vC) <- runDB $ do
         a <- count [QuoteApproved ==. True]
@@ -33,13 +37,24 @@ createFile = do
                     , tarballNumquotes = qC
                     , tarballTimestamp = time
                     }
+         _ <- runDB $ insert t
+         writeFortunes f
+
+writeFortunes :: forall master sub. 
+                (YesodPersist master,
+                YesodPersistBackend master ~ SqlPersist) =>
+                [Char] -> GHandler sub master ()
+writeFortunes f = do
          runDB $ do 
-            insert t
             runResourceT $ selectSource [QuoteApproved ==. True] []
                 $= CL.map toText
                 $$ CL.map encodeUtf8
                 =$ gzip 
                 =$ sinkFile ("static/files/"++f)
+    
+
+
+
 
 
 toText :: Entity Quote -> Text
