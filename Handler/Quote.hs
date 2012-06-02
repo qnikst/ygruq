@@ -25,7 +25,7 @@ import Model.Tarball
 quotePager = PaginationData 
     { paginationPerPage = 10
     , paginationLink = QuoteListPageR
-    , paginationRender = defaultRender
+    , paginationRender = defaultRender 3 4
     }
 
 
@@ -110,9 +110,9 @@ getQuoteCreateR  = do
 
 getQuoteListR    :: Handler RepHtml
 getQuoteListR    = do
+    withPagination quotePager (return 0) [QuoteApproved ==. True] [] $ \quotes pager -> do
     let maid = Nothing
         pageType = Approved
-    (quotes,pager) <- generate quotePager 0 [QuoteApproved ==. True] []
     defaultLayout $ do
         $(widgetFile "quote-list-wrapper")
         $(widgetFile "quote-list")
@@ -120,9 +120,9 @@ getQuoteListR    = do
 
 getQuoteListPageR:: Int -> Handler RepHtml
 getQuoteListPageR page = do
+    withPagination quotePager (return page) [QuoteApproved ==. True] [] $ \quotes pager -> do
     let maid = Nothing
         pageType = Approved
-    (quotes,pager) <- generate quotePager page [QuoteApproved ==. True] []
     defaultLayout $ do
         $(widgetFile "quote-list-wrapper")
         $(widgetFile "quote-list")
@@ -136,20 +136,22 @@ getQuoteShowR quoteId = do
         $(widgetFile "quote-show")
 
 getQuoteAbyssListR :: Handler RepHtml
-getQuoteAbyssListR = do
+getQuoteAbyssListR = 
+    withPagination quotePager (return 0) [QuoteApproved ==. False] [] $ \quotes pager -> do
     maid <- maybeAuth
     let pageType = Abyss
-    (quotes,pager) <- generate quotePager 0 [QuoteApproved ==. False] []
+--    (quotes,pager) <- generate quotePager [QuoteApproved ==. False] [] 0
     defaultLayout $ do
         $(widgetFile "quote-list-wrapper")
         $(widgetFile "quote-list")
 
 postQuoteAbyssProcessR :: Handler RepHtml
 postQuoteAbyssProcessR = do
+    _ <- requireAuth
     toDelete  <- lookupPostParam "delete"
     toApprove <- lookupPostParam "approve"
     qLst      <- lookupPostParams "abyss"
-    let qlst' = map (Key . read . unpack) qLst 
+    let qlst' = catMaybes $ map (fromPathPiece) qLst 
     case (toDelete,toApprove) of
         (Just _, Nothing) -> delete' qlst'
         (Nothing, Just _) -> approve' qlst'
