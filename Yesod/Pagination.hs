@@ -45,7 +45,6 @@ module Yesod.Pagination
 
 import Prelude
 import Yesod
-import Data.List
 import Control.Monad
 
 -- | Configuration datatype used in pagination
@@ -77,7 +76,6 @@ generate (PaginationData perpage link render) p o page = do
         else do
             let ls = if (c `mod` perpage)==0 then 0 else 1
                 totalPages = c `div` perpage + ls
-                s1 = page*perpage 
             entities <- runDB $ selectList p  ( OffsetBy ((page-1)*perpage)
                                               : LimitTo perpage
                                               : o
@@ -99,14 +97,19 @@ generate (PaginationData perpage link render) p o page = do
 withPagination :: ((PersistQuery (PersistEntityBackend val) (GHandler sub master))
                   , PersistEntity val, YesodPersist master
                   , YesodPersistBackend master ~ PersistEntityBackend val) =>
-                  (PaginationData sub master) 
+                  -- | pagination config
+                  (PaginationData sub master)
+                  -- | current page getter
                   -> (GHandler sub master Int)
+                  -- | entity filter
                   -> [Filter val]
+                  -- | select options
                   -> [SelectOpt val]
+                  -- | handler
                   -> ([Entity val] -> GWidget sub master () -> GHandler sub master a)
                   -> GHandler sub master a
-withPagination opt getPage pred sopt next = 
-    getPage >>= generate  opt pred sopt >>= \(e,w) -> next e w
+withPagination opt getPage p so next = 
+    getPage >>= generate  opt p so >>= \(e,w) -> next e w
     
 
 -- | helper type for menu generation
