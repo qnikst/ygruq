@@ -30,7 +30,7 @@ createFile = do
          let y = getL year time
              m = getL month time
              d = getL day time
-             s = printf "%02d%02d%02d" y m d
+             s = printf "%04d%02d%02d" y m d
              f = "fortune-mod-gentoo-ru-"++s++".gz"
              t = Tarball 
                     { tarballFilename  = S.pack f
@@ -39,6 +39,7 @@ createFile = do
                     }
          _ <- runDB $ insert t
          writeFortunes f
+    writeFortunes "fortune-mod-gentoo-ru-99999999.ebuild"
 
 writeFortunes :: forall master sub. 
                 (YesodPersist master,
