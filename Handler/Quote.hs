@@ -5,23 +5,18 @@ module Handler.Quote
 import Prelude (head)
 import Import
 import Data.Time
-import Data.Time.Lens
-import Data.Time.LocalTime
-import Data.Text (pack, unpack, append)
+import Data.Text (append)
 import Data.Maybe
-import Control.Applicative
-import Control.Arrow
+import Database.Persist.GenericSql.Raw
 import Control.Monad
 import Text.Blaze
 import Text.Hamlet (shamlet)
 import Yesod.Feed
-import Yesod.Default.Config (appExtra)
 import Yesod.Pagination
 import Model.Tarball
 
-
-
 -- | Pagination
+quotePager :: PaginationData App App
 quotePager = PaginationData 
     { paginationPerPage = 10
     , paginationLink = QuoteListPageR
@@ -46,6 +41,7 @@ instance ToMarkup LinkSource where
     toMarkup OtherSource = "Другое"
 
 
+--showQuote :: QuoteGeneric SqlPersist -> GHandler App App ()
 showQuote quote = $(whamletFile "templates/quote-show.hamlet")
 
 -- | create quote form
@@ -161,10 +157,10 @@ postQuoteAbyssProcessR = do
     redirect $ toMaster QuoteAbyssListR
     where
         delete' list = do
-            runDB $ mapM delete list
+            _ <- runDB $ mapM delete list
             setMessage [shamlet|Цитаты были удалены|]
         approve' list = do  
-            runDB $ mapM (flip update [QuoteApproved =. True]) list
+            _ <- runDB $ mapM (flip update [QuoteApproved =. True]) list
             setMessage [shamlet|Цитаты были опубликованы|]
 
 getQuoteFeedR :: Handler RepAtomRss

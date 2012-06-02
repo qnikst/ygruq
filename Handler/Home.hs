@@ -4,11 +4,14 @@ module Handler.Home where
 import Import
 import Data.Time
 import Handler.Quote
+import Database.Persist.GenericSql.Raw
 
 -- | form widget
+quoteCreate :: GWidget App App () -> Enctype -> GWidget App App ()
 quoteCreate formWidget enctype = $(widgetFile "quote-create")
 
 -- | version list widget
+versionCreate :: [Entity (TarballGeneric SqlPersist)] -> GWidget App App ()
 versionCreate versions = $(widgetFile "quote-version")
 
 
