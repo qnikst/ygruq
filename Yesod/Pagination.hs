@@ -1,3 +1,4 @@
+{-# LANGUAGE OverloadedStrings #-}
 -- |
 -- author: Alexander V Vershilov <alexander.vershilov@gmail.com>
 --
@@ -18,7 +19,7 @@
 --
 -- myData = PaginationData
 --              { paginationPerPage = 10
---              , paginationLink    = MyRouteR 
+--              , paginationLink    = \i -> (MyRouteR i,[])
 --              , paginationRender  = defaultMenuRender 2 3
 --              }
 -- 
@@ -34,6 +35,12 @@
 --                   |]
 -- @
 --
+-- In case if you want to set page with get request you can use
+--
+-- @
+--   paginationLink = \i -> (MyRouteR, [("page", T.pack $ show $ i)])
+-- @
+--
 module Yesod.Pagination
     ( PaginationData(..)
     , MenuRender
@@ -45,17 +52,24 @@ module Yesod.Pagination
 
 import Prelude
 import Yesod
+import Data.Text (Text)
+import qualified Data.Text as T
+import Control.Arrow
 import Control.Monad
 
 -- | Configuration datatype used in pagination
 --
 data PaginationData sub master = PaginationData 
-        { paginationPerPage  :: Int                    -- ^ number of element per page
-        , paginationLink     :: Int -> Route master    -- ^ link to another page
-        , paginationRender   :: MenuRender sub master  -- ^ render function
+        -- | number of element per page
+        { paginationPerPage  :: Int
+        -- | link to another page
+        , paginationLink     :: LinkRender master
+        -- | render function
+        , paginationRender   :: MenuRender sub master
         }
 
-type MenuRender sub master = Int -> Int -> (Int -> Route master) -> GWidget sub master ()
+type LinkRender master = Int -> (Route master, [(Text,Text)])
+type MenuRender sub master = Int -> Int -> (LinkRender master) -> GWidget sub master ()
 
 -- | Generate menu and output data
 -- N.B. this function doesn't check if Limit and Offset options exist in select
@@ -146,19 +160,22 @@ defaultRender e r p n l = do
         <ul .pagination>
           $if (>) p 1
            <li .previous_page_more>
-             <a href=@{l pre}>&lt;
+             $with (route, suffix) <- createLink pre
+                <a href="@{route}#{suffix}">&lt;
           $forall v <- pages
             $case v
               $of This
                 <li .this_page><a>#{p}</a>
               $of Page k
                 <li>
-                  <a href=@{l k}>#{k}
+                  $with (route, suffix) <- createLink k
+                    <a href="@{route}#{suffix}">#{k}
               $of Skip
                 <li><a>...</a>
           $if (<) nex n
            <li .next_page>
-             <a href=@{l nex}>&gt;
+             $with (route, suffix) <- createLink nex
+               <a href="@{route}#{suffix}">&gt;
     |]
     where 
         setSpace []                        = []
@@ -169,4 +186,8 @@ defaultRender e r p n l = do
                             | x1 == p      = This:setSpace (x2:xs)
                             | (x1+1) /= x2 = (Page x1):Skip:setSpace (x2:xs)
                             | otherwise    = (Page x1):setSpace (x2:xs)
-
+        createLink = second toSuffix . l
+        toSuffix [] = ""
+        toSuffix p = (T.cons '?') . (T.intercalate "&")
+                                  . (map (\(k,v) -> k `T.append` "=" `T.append` v)) 
+                                  $ p
