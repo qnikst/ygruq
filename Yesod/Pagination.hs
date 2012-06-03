@@ -44,9 +44,14 @@
 module Yesod.Pagination
     ( PaginationData(..)
     , MenuRender
+    -- * main functions
     , generate
     , withPagination
+    -- * helpers
     , defaultRender
+    , linkNoParams
+    , linkPage
+    , linkAddPage
     )
     where
 
@@ -160,22 +165,19 @@ defaultRender e r p n l = do
         <ul .pagination>
           $if (>) p 1
            <li .previous_page_more>
-             $with (route, suffix) <- createLink pre
-                <a href="@{route}#{suffix}">&lt;
+             <a href="@?{l pre}">&lt;
           $forall v <- pages
             $case v
               $of This
                 <li .this_page><a>#{p}</a>
               $of Page k
                 <li>
-                  $with (route, suffix) <- createLink k
-                    <a href="@{route}#{suffix}">#{k}
+                  <a href="@?{l k}">#{k}
               $of Skip
                 <li><a>...</a>
           $if (<) nex n
            <li .next_page>
-             $with (route, suffix) <- createLink nex
-               <a href="@{route}#{suffix}">&gt;
+               <a href="@?{l nex}">&gt;
     |]
     where 
         setSpace []                        = []
@@ -186,8 +188,12 @@ defaultRender e r p n l = do
                             | x1 == p      = This:setSpace (x2:xs)
                             | (x1+1) /= x2 = (Page x1):Skip:setSpace (x2:xs)
                             | otherwise    = (Page x1):setSpace (x2:xs)
-        createLink = second toSuffix . l
-        toSuffix [] = ""
-        toSuffix p = (T.cons '?') . (T.intercalate "&")
-                                  . (map (\(k,v) -> k `T.append` "=" `T.append` v)) 
-                                  $ p
+
+linkNoParams :: (Int -> Route master) -> (Int -> (Route master, [(Text,Text)]))
+linkNoParams l = \i -> (l i,[])
+
+linkPage :: Route master -> (Int -> (Route master, [(Text, Text)]))
+linkPage r = \i -> (r, [("page", T.pack $ show $ i)])
+
+linkAddPage :: Route master -> [(Text,Text)] -> (Int -> (Route master, [(Text,Text)]))
+linkAddPage r p = \i -> (r, p++[("page", T.pack $ show $ i)])
