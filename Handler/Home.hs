@@ -25,7 +25,8 @@ getHomeR = do
         return (a,b)
     -- create form widet
     time <- liftIO $ zonedTimeToUTC <$> getZonedTime
-    (formWidget,enctype) <- generateFormPost $ renderTable $ quoteAForm time Nothing
+    form <- quoteAForm
+    (formWidget,enctype) <- generateFormPost $ renderTable form 
     authors <- getAuthorsList
     defaultLayout $ do
         aDomId <- lift newIdent

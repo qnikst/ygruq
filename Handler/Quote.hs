@@ -26,7 +26,7 @@ quotePager = PaginationData
 
 
 -- | Menu
-data QuotePage = Approved | Abyss | Create
+data QuotePage = Approved | Abyss | Create | None
 
 instance ToMarkup LinkSource where
     toMarkup (Gru) = "Gentoo.ru"
@@ -45,13 +45,17 @@ instance ToMarkup LinkSource where
 showQuote quote = $(whamletFile "templates/quote-show.hamlet")
 
 -- | create quote form
-quoteAForm :: UTCTime -> Maybe Quote -> AForm App App Quote
-quoteAForm time mquote = Quote 
-            <$> aopt textField "Автор"       (quoteAuthor <$> mquote)
-            <*> aopt textField "Отправитель" (quoteSender <$> mquote)
-            <*> areq (selectFieldList sources) "Место" (quoteSource <$> mquote)
-            <*> areq urlField "Ссылка"      (quoteProoflink <$> mquote)
-            <*> areq textareaField "Текст"   (quoteText   <$> mquote)
+quoteAForm :: GHandler s0 m0 (AForm App App Quote)
+quoteAForm = do
+    time <- liftIO $ zonedTimeToUTC <$> getZonedTime
+    sender' <- Just <$> lookupSession "sendername"
+    return $
+        Quote 
+            <$> aopt textField "Автор"       Nothing 
+            <*> aopt textField "Отправитель" sender'
+            <*> areq (selectFieldList sources) "Место" Nothing 
+            <*> areq urlField "Ссылка"     Nothing 
+            <*> areq textareaField "Текст"   Nothing 
             <*> pure time 
             <*> pure False
         where 
@@ -68,11 +72,13 @@ quoteAForm time mquote = Quote
 postQuoteCreateR :: Handler RepHtml
 postQuoteCreateR = do
     let pageType = Create
-    time <- liftIO $ zonedTimeToUTC <$> getZonedTime
-    ((result,formWidget),enctype) <- runFormPost $ renderDivs $ quoteAForm time Nothing
+    form <- quoteAForm
+    ((result,formWidget),enctype) <- runFormPost $ renderDivs form 
     showOnly <- lookupPostParam "show"
     case result of
         FormSuccess quote -> do
+            when (isJust (quoteSender quote)) $ 
+              setSession "sendername" $ fromJust $ quoteSender quote
             case showOnly of
                    Just _ -> do
                        setMessage [shamlet|Просмотр цитаты <strong>цитата не добавлена</strong>|] 
@@ -97,8 +103,9 @@ postQuoteCreateR = do
 getQuoteCreateR  :: Handler RepHtml
 getQuoteCreateR  = do
     let pageType = Create
-    time <- liftIO $ zonedTimeToUTC <$> getZonedTime
-    (formWidget,enctype) <- generateFormPost $ renderTable $ quoteAForm time Nothing
+    sender <- Just <$> lookupSession "sendername"
+    form <- quoteAForm
+    (formWidget,enctype) <- generateFormPost $ renderTable form 
     defaultLayout $ do
         $(widgetFile "quote-list-wrapper")
         $(widgetFile "quote-create")
