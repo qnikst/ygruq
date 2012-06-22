@@ -11,6 +11,8 @@ module Import
     , (<>)
 #endif
     , showTime
+    , QuotePage(..)
+    , menuWidget
     ) where
 
 import Prelude hiding (writeFile, readFile, head, tail, init, last)
@@ -38,3 +40,10 @@ showTime  utc   =
         h       = getL hours     utc
         i       = getL minutes   utc
     in pack $ printf "%04d-%02d-%02d %02d:%02d" y m d h i 
+
+-- | Menu
+data QuotePage = Approved | Abyss | Create | None
+
+
+menuWidget pageType = $(widgetFile "quote-list-wrapper")
+

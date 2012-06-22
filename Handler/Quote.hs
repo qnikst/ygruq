@@ -23,11 +23,6 @@ quotePager = PaginationData
     , paginationRender  = defaultRender 3 4
     }
 
-
-
--- | Menu
-data QuotePage = Approved | Abyss | Create | None
-
 instance ToMarkup LinkSource where
     toMarkup (Gru) = "Gentoo.ru"
     toMarkup GruConf = "gentoo@conference.gentoo.ru"
@@ -71,7 +66,6 @@ quoteAForm = do
 
 postQuoteCreateR :: Handler RepHtml
 postQuoteCreateR = do
-    let pageType = Create
     form <- quoteAForm
     ((result,formWidget),enctype) <- runFormPost $ renderDivs form 
     showOnly <- lookupPostParam "show"
@@ -89,12 +83,12 @@ postQuoteCreateR = do
                        toMaster <- getRouteToMaster
                        redirect $ toMaster $ QuoteShowR quoteId
             defaultLayout $ do
-                $(widgetFile "quote-list-wrapper")
+                menuWidget Create
                 $(widgetFile "quote-show")
                 when (isJust showOnly) $ $(widgetFile "quote-create")
         _other -> do 
             defaultLayout $ do
-                $(widgetFile "quote-list-wrapper")
+                menuWidget Create
                 $(widgetFile "quote-create")
 
 
@@ -102,12 +96,11 @@ postQuoteCreateR = do
 
 getQuoteCreateR  :: Handler RepHtml
 getQuoteCreateR  = do
-    let pageType = Create
     sender <- Just <$> lookupSession "sendername"
     form <- quoteAForm
     (formWidget,enctype) <- generateFormPost $ renderTable form 
     defaultLayout $ do
-        $(widgetFile "quote-list-wrapper")
+        menuWidget Create
         $(widgetFile "quote-create")
 
 
@@ -115,9 +108,8 @@ getQuoteListR    :: Handler RepHtml
 getQuoteListR    = do
     withPagination quotePager (return 0) [QuoteApproved ==. True] [] $ \quotes pager -> do
     let maid = Nothing
-        pageType = Approved
     defaultLayout $ do
-        $(widgetFile "quote-list-wrapper")
+        menuWidget Approved
         $(widgetFile "quote-list")
 
 
@@ -125,27 +117,24 @@ getQuoteListPageR:: Int -> Handler RepHtml
 getQuoteListPageR page = do
     withPagination quotePager (return page) [QuoteApproved ==. True] [] $ \quotes pager -> do
     let maid = Nothing
-        pageType = Approved
     defaultLayout $ do
-        $(widgetFile "quote-list-wrapper")
+        menuWidget Approved
         $(widgetFile "quote-list")
 
 getQuoteShowR :: QuoteId -> Handler RepHtml
 getQuoteShowR quoteId = do
     quote <- runDB $ get404 quoteId
-    let pageType = if quoteApproved quote then Approved else Abyss
     defaultLayout $ do
-        $(widgetFile "quote-list-wrapper")
+        menuWidget $ if quoteApproved quote then Approved else Abyss
         $(widgetFile "quote-show")
 
 getQuoteAbyssListR :: Handler RepHtml
 getQuoteAbyssListR = 
     withPagination quotePager (return 0) [QuoteApproved ==. False] [] $ \quotes pager -> do
     maid <- maybeAuth
-    let pageType = Abyss
 --    (quotes,pager) <- generate quotePager [QuoteApproved ==. False] [] 0
     defaultLayout $ do
-        $(widgetFile "quote-list-wrapper")
+        menuWidget Abyss
         $(widgetFile "quote-list")
 
 postQuoteAbyssProcessR :: Handler RepHtml

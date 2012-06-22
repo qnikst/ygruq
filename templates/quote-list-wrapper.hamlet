@@ -27,4 +27,14 @@
             <a href=@{QuoteAbyssListR}>Неутверждённые цитаты
             ]
             [Добавить цитату]
-
+      $of None
+          <h3>
+            [
+            <a href=@{QuoteListR}>Уверждённые цитаты
+            ]
+            [
+            <a href=@{QuoteAbyssListR}>Неутверждённые цитаты
+            ]
+            [
+            <a href=@{QuoteCreateR}>Добавить цитату
+            ]
