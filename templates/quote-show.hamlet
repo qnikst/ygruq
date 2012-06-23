@@ -4,7 +4,8 @@
       \            -- 
       $maybe author <- quoteAuthor quote
         author
-      (#{quoteSource quote})
+      $if (/=) (quoteSource quote) OtherSource
+          (#{quoteSource quote})
     <a href=#{quoteProoflink quote}>пруфлинк
     \ цитату прислал 
     $maybe sender <- quoteSender quote
