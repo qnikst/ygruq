@@ -424,6 +424,10 @@ textarea {
     vertical-align: top; /* 2 */
 }
 
+textarea {
+    width: 350px;
+    height:100px;
+}
 
 /* =============================================================================
    Tables
