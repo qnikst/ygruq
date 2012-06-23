@@ -11,3 +11,4 @@ $nothing
   \
     $forall Entity quoteId quote <- quotes
         ^{showQuote quote}
+^{pager}
