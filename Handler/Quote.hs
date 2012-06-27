@@ -37,7 +37,9 @@ instance ToMarkup LinkSource where
 
 
 --showQuote :: QuoteGeneric SqlPersist -> GHandler App App ()
-showQuote quote = $(whamletFile "templates/quote-show.hamlet")
+showQuote q quote = 
+  let quoteId = Just q 
+  in $(whamletFile "templates/quote-show.hamlet")
 
 -- | create quote form
 quoteAForm :: GHandler s0 m0 (AForm App App Quote)
@@ -84,6 +86,7 @@ postQuoteCreateR = do
                        redirect $ toMaster $ QuoteShowR quoteId
             defaultLayout $ do
                 menuWidget Create
+                let quoteId = Nothing
                 $(widgetFile "quote-show")
                 when (isJust showOnly) $ $(widgetFile "quote-create")
         _other -> do 
@@ -122,10 +125,11 @@ getQuoteListPageR page = do
         $(widgetFile "quote-list")
 
 getQuoteShowR :: QuoteId -> Handler RepHtml
-getQuoteShowR quoteId = do
-    quote <- runDB $ get404 quoteId
+getQuoteShowR q = do
+    quote <- runDB $ get404 q
     defaultLayout $ do
         menuWidget $ if quoteApproved quote then Approved else Abyss
+        let quoteId = Just q
         $(widgetFile "quote-show")
 
 getQuoteAbyssListR :: Handler RepHtml

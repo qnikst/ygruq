@@ -1,4 +1,8 @@
 <div .quote> 
+    $maybe q <- quoteId
+      <a href=@{QuoteShowR q}>##{toPathPiece q}
+    $nothing 
+      цитата не добавлена
     <pre>#{unTextarea (quoteText quote)}
       \
       \            -- 
