@@ -90,7 +90,7 @@ generate :: ((PersistQuery (PersistEntityBackend val) (GHandler sub master))
 generate (PaginationData perpage link render) p o page = do
     c <- runDB $ count p
     unless (page >= 0) $ notFound
-    if (page * perpage) > c 
+    if ((page-1) * perpage) > c 
         then notFound 
         else do
             let ls = if (c `mod` perpage)==0 then 0 else 1
