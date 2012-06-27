@@ -7,7 +7,7 @@
       \
       \            -- 
       $maybe author <- quoteAuthor quote
-        author
+        #{author}
       $if (/=) (quoteSource quote) OtherSource
           (#{quoteSource quote})
     $if (/=) (quoteProoflink quote) ""
