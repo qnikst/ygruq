@@ -10,7 +10,8 @@
         author
       $if (/=) (quoteSource quote) OtherSource
           (#{quoteSource quote})
-    <a href=#{quoteProoflink quote}>пруфлинк
+    $if (/=) (quoteProoflink quote) ""
+      <a href=#{quoteProoflink quote}>пруфлинк
     \ цитату прислал 
     $maybe sender <- quoteSender quote
       #{sender} 
