@@ -19,7 +19,7 @@ import Model.Tarball
 quotePager :: PaginationData App App
 quotePager = PaginationData 
     { paginationPerPage = 10
-    , paginationLink    = \i -> (QuoteListPageR i, [("param","1")])
+    , paginationLink    = linkNoParams QuoteListPageR
     , paginationRender  = defaultRender 3 4
     }
 
