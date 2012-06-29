@@ -125,10 +125,10 @@ withPagination :: ((PersistQuery (PersistEntityBackend val) (GHandler sub master
                   -- | select options
                   -> [SelectOpt val]
                   -- | handler
-                  -> ([Entity val] -> GWidget sub master () -> GHandler sub master a)
+                  -> ([Entity val] -> Maybe (GWidget sub master ()) -> GHandler sub master a)
                   -> GHandler sub master a
 withPagination opt getPage p so next = 
-    getPage >>= generate  opt p so >>= \(e,w) -> next e w
+    getPage >>= generate  opt p so >>= \(e,w) -> next e (Just w)
     
 
 -- | helper type for menu generation

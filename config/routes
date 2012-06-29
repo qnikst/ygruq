@@ -1,8 +1,7 @@
 /quote/create         QuoteCreateR    GET POST
-/quote/list           QuoteListR      GET
+/quote/list           ApprovedListR      GET
 /quote/show/#QuoteId  QuoteShowR      GET
-/quote/list/#Int      QuoteListPageR  GET
-/quote/abyss/         QuoteAbyssListR     GET
+/quote/abyss/         AbyssListR     GET
 /quote/abyss/process  QuoteAbyssProcessR  POST
 /quote/rss	          QuoteFeedR            GET
 

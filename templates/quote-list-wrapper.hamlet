@@ -4,7 +4,7 @@
           <h3>
             [Утвержденные цитаты]
             [
-            <a href=@{QuoteAbyssListR}>Неутверждённые цитаты
+            <a href=@{AbyssListR}>Неутверждённые цитаты
             ]
             [
             <a href=@{QuoteCreateR}>Добавить цитату
@@ -12,7 +12,7 @@
       $of Abyss
           <h3>
             [
-            <a href=@{QuoteListR}>Уверждённые цитаты
+            <a href=@{ApprovedListR}>Утверждённые цитаты
             ]
             [Неутверждённые цитаты]
             [
@@ -21,19 +21,19 @@
       $of Create
           <h3>
             [
-            <a href=@{QuoteListR}>Уверждённые цитаты
+            <a href=@{ApprovedListR}>Утверждённые цитаты
             ]
             [
-            <a href=@{QuoteAbyssListR}>Неутверждённые цитаты
+            <a href=@{AbyssListR}>Неутверждённые цитаты
             ]
             [Добавить цитату]
       $of None
           <h3>
             [
-            <a href=@{QuoteListR}>Уверждённые цитаты
+            <a href=@{ApprovedListR}>Утверждённые цитаты
             ]
             [
-            <a href=@{QuoteAbyssListR}>Неутверждённые цитаты
+            <a href=@{AbyssListR}>Неутверждённые цитаты
             ]
             [
             <a href=@{QuoteCreateR}>Добавить цитату
