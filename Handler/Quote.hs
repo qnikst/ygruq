@@ -16,10 +16,24 @@ import Yesod.Pagination
 import Model.Tarball
 
 -- | Pagination
-quotePager :: PaginationData App App
-quotePager = PaginationData 
+quoteApprovedPager :: PaginationData App App
+quoteApprovedPager = PaginationData 
     { paginationPerPage = 10
-    , paginationLink    = linkPage QuoteListR
+    , paginationLink    = linkPage ApprovedListR
+    , paginationRender  = defaultRender 3 4
+    }
+
+quoteAbyssPager :: PaginationData App App
+quoteAbyssPager = PaginationData 
+    { paginationPerPage = 10
+    , paginationLink    = linkPage AbyssListR
+    , paginationRender  = defaultRender 3 4
+    }
+
+quotePager :: QuotePage -> PaginationData App App
+quotePager quotepage = PaginationData 
+    { paginationPerPage = 10
+    , paginationLink    = linkPage $ case quotepage of {Approved -> ApprovedListR; Abyss -> AbyssListR}
     , paginationRender  = defaultRender 3 4
     }
 
@@ -34,6 +48,10 @@ instance ToMarkup LinkSource where
     toMarkup GruRion  = "rion@c.g.r"
     toMarkup LOR      = "linux.org.ru"
     toMarkup OtherSource = "Другое"
+
+isApproved :: QuotePage -> Bool
+isApproved Approved = True
+isApproved _ = False
 
 
 --showQuote :: QuoteGeneric SqlPersist -> GHandler App App ()
@@ -94,9 +112,6 @@ postQuoteCreateR = do
                 menuWidget Create
                 $(widgetFile "quote-create")
 
-
-
-
 getQuoteCreateR  :: Handler RepHtml
 getQuoteCreateR  = do
     sender <- Just <$> lookupSession "sendername"
@@ -106,33 +121,36 @@ getQuoteCreateR  = do
         menuWidget Create
         $(widgetFile "quote-create")
 
-pagerHandler :: [Entity Quote] -> Maybe (GWidget App App ()) -> GHandler App App RepHtml
-pagerHandler quotes pager = do
-    let maid = Nothing
+pagerHandler :: QuotePage -> [Entity Quote] -> Maybe (GWidget App App ()) -> GHandler App App RepHtml
+pagerHandler quotepage quotes pager = do
+    abyssAuth <- maybeAuth
+    let maid = case quotepage of
+         Approved -> Nothing
+         Abyss    -> abyssAuth
     defaultLayout $ do
-        menuWidget Approved
+        menuWidget quotepage
         $(widgetFile "quote-list")
 
-getQuoteListR    :: Handler RepHtml
-getQuoteListR    = do
-    page <- runInputGet $ iopt intField "page" 
-    case page of
-        Just p ->
-            withPagination quotePager (return p) [QuoteApproved ==. True] [] $ pagerHandler
-        Nothing -> do
-            quotes <- runDB $ selectList [QuoteApproved ==. True] []
-            pagerHandler quotes Nothing
+showPage :: QuotePage -> Int -> Handler RepHtml
+showPage quotepage n = do
+    withPagination (quotePager quotepage) (return n) [QuoteApproved ==. isApproved quotepage] [] $ handler
+    where handler = pagerHandler quotepage
 
+showAll :: QuotePage -> Handler RepHtml
+showAll quotepage = do
+    quotes <- runDB $ selectList [QuoteApproved ==. isApproved quotepage] []
+    pagerHandler quotepage quotes Nothing
 
-{-
-getQuoteListPageR:: Int -> Handler RepHtml
-getQuoteListPageR page = do
-    withPagination quotePager (return page) [QuoteApproved ==. True] [] $ \quote pager -> do
-    let maid = Nothing
-    defaultLayout $ do
-        menuWidget Approved
-        $(widgetFile "quote-list")
--}
+quoteList    :: QuotePage -> Handler RepHtml
+quoteList quotepage   = do
+    page <- runInputGet $ iopt intField "page"
+    maybe (showAll quotepage) (showPage quotepage) page
+
+getApprovedListR :: Handler RepHtml
+getApprovedListR = quoteList Approved
+
+getAbyssListR :: Handler RepHtml
+getAbyssListR = quoteList Abyss
 
 getQuoteShowR :: QuoteId -> Handler RepHtml
 getQuoteShowR q = do
@@ -141,15 +159,6 @@ getQuoteShowR q = do
         menuWidget $ if quoteApproved quote then Approved else Abyss
         let quoteId = Just q
         $(widgetFile "quote-show")
-
-getQuoteAbyssListR :: Handler RepHtml
-getQuoteAbyssListR = 
-    withPagination quotePager (return 0) [QuoteApproved ==. False] [] $ \quotes pager -> do
-    maid <- maybeAuth
---    (quotes,pager) <- generate quotePager [QuoteApproved ==. False] [] 0
-    defaultLayout $ do
-        menuWidget Abyss
-        $(widgetFile "quote-list")
 
 postQuoteAbyssProcessR :: Handler RepHtml
 postQuoteAbyssProcessR = do
@@ -164,7 +173,7 @@ postQuoteAbyssProcessR = do
         (_,_)             -> do
             setMessage [shamlet|Invalid command|]
     toMaster <- getRouteToMaster
-    redirect $ toMaster QuoteAbyssListR
+    redirect $ toMaster AbyssListR
     where
         delete' list = do
             _ <- runDB $ mapM delete list
