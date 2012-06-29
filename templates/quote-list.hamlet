@@ -1,4 +1,6 @@
-^{pager}
+$maybe pager <- pager
+    ^{pager}
+
 $maybe _ <- maid
   <form action=@{QuoteAbyssProcessR} method=post>
     $forall Entity quoteId quote <- quotes
@@ -11,4 +13,6 @@ $nothing
   \
     $forall Entity quoteId quote <- quotes
         ^{showQuote quoteId quote}
-^{pager}
+
+$maybe pager <- pager
+    ^{pager}

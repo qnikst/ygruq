@@ -19,7 +19,7 @@ import Model.Tarball
 quotePager :: PaginationData App App
 quotePager = PaginationData 
     { paginationPerPage = 10
-    , paginationLink    = linkNoParams QuoteListPageR
+    , paginationLink    = linkPage QuoteListR
     , paginationRender  = defaultRender 3 4
     }
 
@@ -106,23 +106,33 @@ getQuoteCreateR  = do
         menuWidget Create
         $(widgetFile "quote-create")
 
+pagerHandler :: [Entity Quote] -> Maybe (GWidget App App ()) -> GHandler App App RepHtml
+pagerHandler quotes pager = do
+    let maid = Nothing
+    defaultLayout $ do
+        menuWidget Approved
+        $(widgetFile "quote-list")
 
 getQuoteListR    :: Handler RepHtml
 getQuoteListR    = do
-    withPagination quotePager (return 0) [QuoteApproved ==. True] [] $ \quotes pager -> do
-    let maid = Nothing
-    defaultLayout $ do
-        menuWidget Approved
-        $(widgetFile "quote-list")
+    page <- runInputGet $ iopt intField "page" 
+    case page of
+        Just p ->
+            withPagination quotePager (return p) [QuoteApproved ==. True] [] $ pagerHandler
+        Nothing -> do
+            quotes <- runDB $ selectList [QuoteApproved ==. True] []
+            pagerHandler quotes Nothing
 
 
+{-
 getQuoteListPageR:: Int -> Handler RepHtml
 getQuoteListPageR page = do
-    withPagination quotePager (return page) [QuoteApproved ==. True] [] $ \quotes pager -> do
+    withPagination quotePager (return page) [QuoteApproved ==. True] [] $ \quote pager -> do
     let maid = Nothing
     defaultLayout $ do
         menuWidget Approved
         $(widgetFile "quote-list")
+-}
 
 getQuoteShowR :: QuoteId -> Handler RepHtml
 getQuoteShowR q = do
