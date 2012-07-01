@@ -7,7 +7,7 @@ import Import
 import Data.Time
 import Data.Text (append)
 import Data.Maybe
-import Database.Persist.GenericSql.Raw
+--import Database.Persist.GenericSql.Raw
 import Control.Monad
 import Text.Blaze
 import Text.Hamlet (shamlet)
@@ -16,24 +16,10 @@ import Yesod.Pagination
 import Model.Tarball
 
 -- | Pagination
-quoteApprovedPager :: PaginationData App App
-quoteApprovedPager = PaginationData 
-    { paginationPerPage = 10
-    , paginationLink    = linkPage ApprovedListR
-    , paginationRender  = defaultRender 3 4
-    }
-
-quoteAbyssPager :: PaginationData App App
-quoteAbyssPager = PaginationData 
-    { paginationPerPage = 10
-    , paginationLink    = linkPage AbyssListR
-    , paginationRender  = defaultRender 3 4
-    }
-
 quotePager :: QuotePage -> PaginationData App App
 quotePager quotepage = PaginationData 
     { paginationPerPage = 10
-    , paginationLink    = linkPage $ case quotepage of {Approved -> ApprovedListR; Abyss -> AbyssListR}
+    , paginationLink    = linkPage $ case quotepage of {Abyss -> AbyssListR; _ -> ApprovedListR;}
     , paginationRender  = defaultRender 3 4
     }
 
@@ -55,6 +41,9 @@ isApproved _ = False
 
 
 --showQuote :: QuoteGeneric SqlPersist -> GHandler App App ()
+showQuote :: QuoteId
+          -> QuoteGeneric qlPersist
+          -> GWidget App App ()
 showQuote q quote = 
   let quoteId = Just q 
   in $(whamletFile "templates/quote-show.hamlet")
@@ -121,30 +110,33 @@ getQuoteCreateR  = do
         menuWidget Create
         $(widgetFile "quote-create")
 
-pagerHandler :: QuotePage -> [Entity Quote] -> Maybe (GWidget App App ()) -> GHandler App App RepHtml
-pagerHandler quotepage quotes pager = do
-    abyssAuth <- maybeAuth
-    let maid = case quotepage of
-         Approved -> Nothing
-         Abyss    -> abyssAuth
-    defaultLayout $ do
-        menuWidget quotepage
-        $(widgetFile "quote-list")
-
+{-
 showPage :: QuotePage -> Int -> Handler RepHtml
 showPage quotepage n = do
     withPagination (quotePager quotepage) (return n) [QuoteApproved ==. isApproved quotepage] [] $ handler
     where handler = pagerHandler quotepage
-
-showAll :: QuotePage -> Handler RepHtml
-showAll quotepage = do
-    quotes <- runDB $ selectList [QuoteApproved ==. isApproved quotepage] []
-    pagerHandler quotepage quotes Nothing
+-}
 
 quoteList    :: QuotePage -> Handler RepHtml
 quoteList quotepage   = do
+    let q = [QuoteApproved ==. isApproved quotepage]
+        s = []
+    maid <- case quotepage of
+              Abyss -> maybeAuth
+              _     -> return Nothing
     page <- runInputGet $ iopt intField "page"
-    maybe (showAll quotepage) (showPage quotepage) page
+    (quotes, pager) <- maybe (showAll q s) (showPage q s) page
+    defaultLayout $ do
+        menuWidget quotepage
+        $(widgetFile "quote-list")
+    where
+        showAll q s = do
+            quotes <- runDB $ selectList q s
+            return (quotes, Nothing)
+        showPage q s p = do 
+            (quotes,pager) <- generate (quotePager quotepage) q s p
+            return (quotes, Just pager)
+        
 
 getApprovedListR :: Handler RepHtml
 getApprovedListR = quoteList Approved
