@@ -2,38 +2,48 @@
   $case pageType
       $of Approved
           <h3>
-            [Утвержденные цитаты]
+            [Утвержденные цитаты 
+            ]
             [
-            <a href=@{AbyssListR}>Неутверждённые цитаты
+            <a href=@{AbyssListR}?page=1>Неутверждённые цитаты 
             ]
             [
             <a href=@{QuoteCreateR}>Добавить цитату
             ]
+            <br>
+            <a href=@{ApprovedListR}><font size="1">Одной страницей</font></a>
+            <br>
+            <a href=@{ApprovedListR}?page=1><font size="1">По 10 цитат на страницу</font></a>
       $of Abyss
           <h3>
             [
-            <a href=@{ApprovedListR}>Утверждённые цитаты
+            <a href=@{ApprovedListR}?page=1>Утверждённые цитаты 
             ]
-            [Неутверждённые цитаты]
+            [Неутверждённые цитаты 
+            ]
             [
             <a href=@{QuoteCreateR}>Добавить цитату
             ]
+            <br>
+            <a href=@{ApprovedListR}><font size="1">Одной страницей</font></a>
+            <br>
+            <a href=@{ApprovedListR}?page=1><font size="1">По 10 цитат на страницу</font></a>
       $of Create
           <h3>
             [
-            <a href=@{ApprovedListR}>Утверждённые цитаты
+            <a href=@{ApprovedListR}?page=1>Утверждённые цитаты 
             ]
             [
-            <a href=@{AbyssListR}>Неутверждённые цитаты
+            <a href=@{AbyssListR}>Неутверждённые цитаты 
             ]
             [Добавить цитату]
       $of None
           <h3>
             [
-            <a href=@{ApprovedListR}>Утверждённые цитаты
+            <a href=@{ApprovedListR}?page=1>Утверждённые цитаты 
             ]
             [
-            <a href=@{AbyssListR}>Неутверждённые цитаты
+            <a href=@{AbyssListR}?page=1>Неутверждённые цитаты 
             ]
             [
             <a href=@{QuoteCreateR}>Добавить цитату

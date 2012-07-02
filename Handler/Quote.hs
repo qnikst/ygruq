@@ -136,7 +136,6 @@ quoteList quotepage   = do
         showPage q s p = do 
             (quotes,pager) <- generate (quotePager quotepage) q s p
             return (quotes, Just pager)
-        
 
 getApprovedListR :: Handler RepHtml
 getApprovedListR = quoteList Approved

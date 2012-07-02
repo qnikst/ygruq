@@ -45,5 +45,6 @@ showTime  utc   =
 data QuotePage = Approved | Abyss | Create | None
 
 
+menuWidget :: QuotePage -> GWidget sub App ()
 menuWidget pageType = $(widgetFile "quote-list-wrapper")
 
