@@ -42,7 +42,14 @@ showTime  utc   =
     in pack $ printf "%04d-%02d-%02d %02d:%02d" y m d h i 
 
 -- | Menu
-data QuotePage = Approved | Abyss | Create | None
+data QuotePage = Approved | Abyss | Create | None deriving (Eq)
+
+menuPages = [ (Approved,"Утвержденные цитаты"::Text,ApprovedListR)
+            , (Abyss,   "Неутверженные цитаты",AbyssListR)
+            , (Create,  "Добавить цитату", QuoteCreateR)
+            ]
 
 
-menuWidget pageType = $(widgetFile "quote-list-wrapper")
+menuWidget pageType = 
+  let pages = menuPages 
+  in $(widgetFile "quote-list-wrapper")
