@@ -49,7 +49,6 @@ menuPages = [ (Approved,"Утвержденные цитаты"::Text,ApprovedLi
             , (Create,  "Добавить цитату", QuoteCreateR)
             ]
 
-
 menuWidget pageType = 
   let pages = menuPages 
   in $(widgetFile "quote-list-wrapper")
