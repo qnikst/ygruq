@@ -5,15 +5,16 @@ module Handler.Quote
 import Prelude (head)
 import Import
 import Data.Time
-import Data.Text (append)
+import qualified Data.Text as T
 import Data.Maybe
---import Database.Persist.GenericSql.Raw
+import Database.Persist.GenericSql.Raw
 import Control.Monad
 import Text.Blaze
 import Text.Hamlet (shamlet)
 import Yesod.Feed
 import Yesod.Pagination
 import Model.Tarball
+import Database.Persist.Store
 
 -- | Pagination
 quotePager :: QuotePage -> PaginationData App App
@@ -71,7 +72,7 @@ quoteAForm = do
                       ,("ru.gentoo-wiki.com",RuWiki)
                       ,("Другое",OtherSource)]
 
-
+quoteSearchAForm = aopt textField "search" Nothing
 
 postQuoteCreateR :: Handler RepHtml
 postQuoteCreateR = do
@@ -110,21 +111,15 @@ getQuoteCreateR  = do
         menuWidget Create
         $(widgetFile "quote-create")
 
-{-
-showPage :: QuotePage -> Int -> Handler RepHtml
-showPage quotepage n = do
-    withPagination (quotePager quotepage) (return n) [QuoteApproved ==. isApproved quotepage] [] $ handler
-    where handler = pagerHandler quotepage
--}
-
-quoteList    :: QuotePage -> Handler RepHtml
+quoteList :: QuotePage -> Handler RepHtml
 quoteList quotepage   = do
-    let q = [QuoteApproved ==. isApproved quotepage]
+    search <- runInputGet $ iopt textField "search"
+    let q = (QuoteApproved ==. isApproved quotepage):(searchQ search)
         s = []
+    page <- runInputGet $ iopt intField "page"
     maid <- case quotepage of
               Abyss -> maybeAuth
               _     -> return Nothing
-    page <- runInputGet $ iopt intField "page"
     (quotes, pager) <- maybe (showAll q s) (showPage q s) page
     defaultLayout $ do
         menuWidget quotepage
@@ -136,7 +131,10 @@ quoteList quotepage   = do
         showPage q s p = do 
             (quotes,pager) <- generate (quotePager quotepage) q s p
             return (quotes, Just pager)
-        
+        searchQ Nothing  = []
+        searchQ (Just t) = [Filter QuoteText
+                                   (Left $ Textarea $ T.concat ["%", t, "%"])
+                                   (BackendSpecificFilter "like")]
 
 getApprovedListR :: Handler RepHtml
 getApprovedListR = quoteList Approved
@@ -194,6 +192,6 @@ getQuoteFeedR = do
             FeedEntry 
                 { feedEntryLink    = QuoteShowR i
                 , feedEntryUpdated = quoteTimestamp q
-                , feedEntryTitle   = ("Цитата №" `append` (toPathPiece i))
+                , feedEntryTitle   = ("Цитата №" `T.append` (toPathPiece i))
                 , feedEntryContent = (toHtml $ quoteText q)
                 }

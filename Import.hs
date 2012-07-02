@@ -46,4 +46,3 @@ data QuotePage = Approved | Abyss | Create | None
 
 
 menuWidget pageType = $(widgetFile "quote-list-wrapper")
-
