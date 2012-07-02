@@ -1,53 +1,16 @@
 <div .menu>
-  $case pageType
-      $of Approved
-          <h3>
-            [Утвержденные цитаты 
-            ]
-            [
-            <a href=@{AbyssListR}?page=1>Неутверждённые цитаты 
-            ]
-            [
-            <a href=@{QuoteCreateR}>Добавить цитату
-            ]
-            <br>
-            <a href=@{ApprovedListR}><font size="1">Одной страницей</font></a>
-            <br>
-            <a href=@{ApprovedListR}?page=1><font size="1">По 10 цитат на страницу</font></a>
-      $of Abyss
-          <h3>
-            [
-            <a href=@{ApprovedListR}?page=1>Утверждённые цитаты 
-            ]
-            [Неутверждённые цитаты 
-            ]
-            [
-            <a href=@{QuoteCreateR}>Добавить цитату
-            ]
-            <br>
-            <a href=@{ApprovedListR}><font size="1">Одной страницей</font></a>
-            <br>
-            <a href=@{ApprovedListR}?page=1><font size="1">По 10 цитат на страницу</font></a>
-      $of Create
-          <h3>
-            [
-            <a href=@{ApprovedListR}?page=1>Утверждённые цитаты 
-            ]
-            [
-            <a href=@{AbyssListR}>Неутверждённые цитаты 
-            ]
-            [Добавить цитату]
-      $of None
-          <h3>
-            [
-            <a href=@{ApprovedListR}?page=1>Утверждённые цитаты 
-            ]
-            [
-            <a href=@{AbyssListR}?page=1>Неутверждённые цитаты 
-            ]
-            [
-            <a href=@{QuoteCreateR}>Добавить цитату
-            ]
 <form action=@{ApprovedListR} method=get>
    Поиск: <input type=text value="" name="search"/>
    <input type="submit" value="&gt;"/>
+  <h3>
+    $forall (cType,cName,cUrl) <- pages
+      [
+      $if (/=) pageType cType
+        <a href=@{cUrl}>#{cName}
+      $else 
+        #{cName}
+      ]
+
+    <form action=@{ApprovedListR} method=get>
+       Поиск: <input type=text value="" name=search>
+       <input type=submit value=&gt;>
