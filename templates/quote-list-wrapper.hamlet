@@ -48,3 +48,6 @@
             [
             <a href=@{QuoteCreateR}>Добавить цитату
             ]
+<form action=@{ApprovedListR} method=get>
+   Поиск: <input type=text value="" name="search"/>
+   <input type="submit" value="&gt;"/>
