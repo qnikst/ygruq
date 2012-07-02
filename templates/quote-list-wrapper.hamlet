@@ -3,7 +3,7 @@
     $forall (cType,cName,cUrl) <- pages
       [
       $if (/=) pageType cType
-        <a href=@{cUrl}>#{cName}
+        <a href=@?{cUrl}>#{cName}
       $else 
         #{cName}
       ]

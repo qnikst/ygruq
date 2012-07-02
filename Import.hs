@@ -44,9 +44,9 @@ showTime  utc   =
 -- | Menu
 data QuotePage = Approved | Abyss | Create | None deriving (Eq)
 
-menuPages = [ (Approved,"Утвержденные цитаты"::Text,ApprovedListR)
-            , (Abyss,   "Неутверженные цитаты",AbyssListR)
-            , (Create,  "Добавить цитату", QuoteCreateR)
+menuPages = [ (Approved,"Утвержденные цитаты"::Text,(ApprovedListR, [("page", "1")]))
+            , (Abyss,   "Неутверженные цитаты",(AbyssListR, [("page", "1")]))
+            , (Create,  "Добавить цитату", (QuoteCreateR, []))
             ]
 
 menuWidget pageType = 
