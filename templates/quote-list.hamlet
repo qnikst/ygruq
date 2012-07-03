@@ -1,5 +1,16 @@
 $maybe pager <- pager
+    $case quotepage
+        $of Approved
+            <a href=@{ApprovedListR}><small>На одной странице</small></a>
+        $of Abyss
+            <a href=@{AbyssListR}><small>На одной странице</small></a>
     ^{pager}
+$nothing
+    $case quotepage
+        $of Approved
+            <a href=@{ApprovedListR}?page=1><small>По 10 на страницу</small></a>
+        $of Abyss
+            <a href=@{AbyssListR}?page=1><small>По 10 на страницу</small></a>
 
 $maybe _ <- maid
   <form action=@{QuoteAbyssProcessR} method=post>
