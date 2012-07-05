@@ -123,7 +123,8 @@ quoteList quotepage   = do
     (quotes, pager) <- maybe (showAll q s) (showPage q s) page
     defaultLayout $ do
         menuWidget quotepage
-        $(widgetFile "quote-list")
+        let pages = menuPages
+            in $(widgetFile "quote-list")
     where
         showAll q s = do
             quotes <- runDB $ selectList q s

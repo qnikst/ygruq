@@ -13,6 +13,7 @@ module Import
     , showTime
     , QuotePage(..)
     , menuWidget
+    , menuPages
     ) where
 
 import Prelude hiding (writeFile, readFile, head, tail, init, last)
@@ -55,7 +56,6 @@ menuPages = [ (Approved,(ApprovedListR,[("page","0")]))
             , (Abyss,(AbyssListR,[("page","0")]))
             , (Create,(QuoteCreateR,[]))
             ]
-
 
 menuWidget pageType = 
   let pages = menuPages 

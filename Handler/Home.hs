@@ -32,5 +32,6 @@ getHomeR = do
         aDomId <- lift newIdent
         setTitle "Welcome To Yesod!"
         menuWidget None
-        $(widgetFile "homepage")
+        let pages = menuPages
+            in $(widgetFile "homepage")
 
