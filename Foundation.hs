@@ -32,6 +32,9 @@ import Text.Jasmine (minifym)
 import Web.ClientSession (getKey)
 import Text.Hamlet (hamletFile)
 
+import Data.Text (Text)
+import qualified Data.List as L
+
 -- | The site argument for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
 -- starts running, such as database connections. Every handler will have
@@ -71,6 +74,20 @@ mkYesodData "App" $(parseRoutesFile "config/routes")
 
 type Form x = Html -> MForm App App (FormResult x, Widget)
 
+
+navbar :: [(Text, Route App)]
+navbar =
+  [ ("Утвержденные цитаты", ApprovedListR)
+  , ("Неутвержденные цитаты", AbyssListR)
+  , ("Добавить цитату", QuoteCreateR)
+  ]
+
+instance YesodBreadcrumbs App where
+  breadcrumb r =
+     case L.find ((== r) . snd) navbar of
+        Nothing -> return ("", Nothing)
+        Just (title, _) -> return (title, Nothing) 
+
 -- Please see the documentation for the Yesod typeclass. There are a number
 -- of settings which can be configured by overriding methods here.
 instance Yesod App where
@@ -85,6 +102,13 @@ instance Yesod App where
     defaultLayout widget = do
         master <- getYesod
         mmsg <- getMessage
+
+        (title,parents) <- breadcrumbs
+
+        current <- getCurrentRoute
+        toMaster <- getRouteToMaster
+
+        let isCurrent x = Just x == fmap toMaster current
 
         -- We break up the default layout into two components:
         -- default-layout is the contents of the body tag, and
