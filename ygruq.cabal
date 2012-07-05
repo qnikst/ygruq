@@ -1,11 +1,11 @@
 name:              ygruq
-version:           0.0.0
+version:           0.0.3
 license:           BSD3
 license-file:      LICENSE
 author:            Alexander Vershilov
 maintainer:        Alexander Vershilov
-synopsis:          The greatest Yesod web application ever.
-description:       I'm sure you can say something clever here if you try.
+synopsis:          Quotes site for gentoo.ru 
+description:       A simple quote storage site 
 category:          Web
 stability:         Experimental
 cabal-version:     >= 1.8
