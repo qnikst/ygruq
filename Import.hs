@@ -13,6 +13,7 @@ module Import
     , showTime
     , QuotePage(..)
     , menuWidget
+    , menuPages
     ) where
 
 import Prelude hiding (writeFile, readFile, head, tail, init, last)

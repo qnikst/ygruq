@@ -1,16 +1,17 @@
-$maybe pager <- pager
-    $case quotepage
-        $of Approved
-            <a href=@{ApprovedListR}><small>На одной странице</small></a>
-        $of Abyss
-            <a href=@{AbyssListR}><small>На одной странице</small></a>
-    ^{pager}
+$maybe _ <- search
+    $maybe pager <- pager
+        ^{pager}
 $nothing
-    $case quotepage
-        $of Approved
-            <a href=@{ApprovedListR}?page=1><small>По 10 на страницу</small></a>
-        $of Abyss
-            <a href=@{AbyssListR}?page=1><small>По 10 на страницу</small></a>
+    $with mp <- lookup quotepage pages
+        $maybe p <- mp
+            <form action=@?{p} method=get>
+                Поиск: <input type=text value="" name=search>
+                <input type=submit value=&gt;>
+            $maybe pager <- pager
+                <a href=@{fst p}><small>На одной странице</small></a>
+                ^{pager}
+            $nothing
+                <a href=@?{p}><small>По 10 на страницу</small></a>
 
 $maybe _ <- maid
   <form action=@{QuoteAbyssProcessR} method=post>

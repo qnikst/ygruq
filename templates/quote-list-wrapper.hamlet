@@ -7,15 +7,3 @@
       $else 
         #{cType}
       ]
-
-    $case pageType
-        $of Approved
-            <form action=@{ApprovedListR} method=get>
-                Поиск: <input type=text value="" name=search>
-                <input type=submit value=&gt;>
-        $of Abyss
-            <form action=@{AbyssListR} method=get>
-                Поиск: <input type=text value="" name=search>
-                <input type=submit value=&gt;>
-        $of_
-            
