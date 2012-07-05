@@ -31,7 +31,6 @@ getHomeR = do
     defaultLayout $ do
         aDomId <- lift newIdent
         setTitle "Welcome To Yesod!"
-        menuWidget None
         let pages = menuPages
             in $(widgetFile "homepage")
 

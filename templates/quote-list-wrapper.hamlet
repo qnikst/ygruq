@@ -1,9 +1,0 @@
-<div .menu>
-  <h3>
-    $forall (cType,cUrl) <- pages
-      [
-      $if (/=) pageType cType
-        <a href=@?{cUrl}>#{cType}
-      $else 
-        #{cType}
-      ]

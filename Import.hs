@@ -12,7 +12,6 @@ module Import
 #endif
     , showTime
     , QuotePage(..)
-    , menuWidget
     , menuPages
     ) where
 
@@ -57,6 +56,3 @@ menuPages = [ (Approved,(ApprovedListR,[("page","0")]))
             , (Create,(QuoteCreateR,[]))
             ]
 
-menuWidget pageType = 
-  let pages = menuPages 
-  in $(widgetFile "quote-list-wrapper")

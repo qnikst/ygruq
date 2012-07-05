@@ -93,13 +93,11 @@ postQuoteCreateR = do
                        toMaster <- getRouteToMaster
                        redirect $ toMaster $ QuoteShowR quoteId
             defaultLayout $ do
-                menuWidget Create
                 let quoteId = Nothing
                 $(widgetFile "quote-show")
                 when (isJust showOnly) $ $(widgetFile "quote-create")
         _other -> do 
             defaultLayout $ do
-                menuWidget Create
                 $(widgetFile "quote-create")
 
 getQuoteCreateR  :: Handler RepHtml
@@ -108,7 +106,6 @@ getQuoteCreateR  = do
     form <- quoteAForm
     (formWidget,enctype) <- generateFormPost $ renderTable form 
     defaultLayout $ do
-        menuWidget Create
         $(widgetFile "quote-create")
 
 quoteList :: QuotePage -> Handler RepHtml
@@ -122,7 +119,6 @@ quoteList quotepage   = do
               _     -> return Nothing
     (quotes, pager) <- maybe (showAll q s) (showPage q s) page
     defaultLayout $ do
-        menuWidget quotepage
         let pages = menuPages
             in $(widgetFile "quote-list")
     where
@@ -147,7 +143,6 @@ getQuoteShowR :: QuoteId -> Handler RepHtml
 getQuoteShowR q = do
     quote <- runDB $ get404 q
     defaultLayout $ do
-        menuWidget $ if quoteApproved quote then Approved else Abyss
         let quoteId = Just q
         $(widgetFile "quote-show")
 

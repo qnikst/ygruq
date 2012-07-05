@@ -38,9 +38,6 @@
                    $else 
                      <a href=@{cUrl}>#{cType}
                    ]
-              <form action=@{ApprovedListR} method=get>
-                 Поиск: <input type=text value="" name=search>
-                 <input type=submit value=&gt;>
             <div id="main" role="main">
               ^{pageBody pc}
             <footer>
