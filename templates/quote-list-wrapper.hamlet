@@ -1,11 +1,11 @@
 <div .menu>
   <h3>
-    $forall (cType,cName,cUrl) <- pages
+    $forall (cType,cUrl) <- pages
       [
       $if (/=) pageType cType
-        <a href=@{cUrl}>#{cName}
+        <a href=@?{cUrl}>#{cType}
       $else 
-        #{cName}
+        #{cType}
       ]
 
     <form action=@{ApprovedListR} method=get>

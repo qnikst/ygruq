@@ -26,6 +26,7 @@ import Settings.Development
 import Data.Time.Lens
 import Data.Time
 import Text.Printf
+import Text.Blaze
 
 
 #if __GLASGOW_HASKELL__ < 704
@@ -44,9 +45,15 @@ showTime  utc   =
 -- | Menu
 data QuotePage = Approved | Abyss | Create | None deriving (Eq)
 
-menuPages = [ (Approved,"Утвержденные цитаты"::Text,ApprovedListR)
-            , (Abyss,   "Неутверженные цитаты",AbyssListR)
-            , (Create,  "Добавить цитату", QuoteCreateR)
+instance ToMarkup QuotePage where
+  toMarkup Approved = "Утвержденные цитаты"
+  toMarkup Abyss    = "Неутвержденные цитаты"
+  toMarkup Create   = "Добавить цитату"
+  toMarkup None     = ""
+
+menuPages = [ (Approved,(ApprovedListR,[("page","0")]))
+            , (Abyss,(AbyssListR,[("page","0")]))
+            , (Create,(QuoteCreateR,[]))
             ]
 
 
