@@ -113,11 +113,13 @@ quoteList quotepage   = do
     search <- runInputGet $ iopt textField "search"
     let q = (QuoteApproved ==. isApproved quotepage):(searchQ search)
         s = []
-    page <- runInputGet $ iopt intField "page"
+    (page,onOne) <- runInputGet $ (,) <$> iopt intField "page" <*> iopt intField "all"
     maid <- case quotepage of
               Abyss -> maybeAuth
               _     -> return Nothing
-    (quotes, pager) <- maybe (showAll q s) (showPage q s) page
+    (quotes, pager) <- case onOne of
+                          Just _ -> showAll q s
+                          Nothing -> showPage q s $ maybe 0 id page
     defaultLayout $ do
         let pages = menuPages
             in $(widgetFile "quote-list")

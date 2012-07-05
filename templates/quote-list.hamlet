@@ -8,7 +8,7 @@ $nothing
                 Поиск: <input type=text value="" name=search>
                 <input type=submit value=&gt;>
             $maybe pager <- pager
-                <a href=@{fst p}><small>На одной странице</small></a>
+                <a href=@{fst p}?all=1><small>На одной странице</small></a>
                 ^{pager}
             $nothing
                 <a href=@?{p}><small>По 10 на страницу</small></a>
