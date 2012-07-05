@@ -10,14 +10,14 @@
 ^{versionCreate versions}
 
 <p> Вы можете 
-  <a href=@{ApprovedListR}>посмотреть все цитаты
+  <a href=@{ApprovedListR}?page=1>посмотреть все цитаты
   , вошедшие в версии 9999. Также они доступны через 
   <a href=@{QuoteFeedR}>
    <img src="/static/img/icon-rss.png" alt="RSS"/>
    RSS
   .
 
-<p> Кроме того, в <a href=@{AbyssListR}>очереди на рассмотрение</a> находятся 
+<p> Кроме того, в <a href=@{AbyssListR}?page=1>очереди на рассмотрение</a> находятся 
   #{notApproved} цитат(ы).
 
 <p><strong>Ebuild</strong>'ы ищите в оверлее <b><a href="http://code.google.com/p/rion-overlay">rion</a></b>  
