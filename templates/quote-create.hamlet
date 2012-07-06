@@ -1,5 +1,5 @@
-<form class="well" method=post action=@{QuoteCreateR} enctype=#{enctype}>
+<form .well method=post action=@{QuoteCreateR} enctype=#{enctype}>
    <table>
      ^{formWidget}
-   <button class="btn" type=submit name=add>Добавить 
-   <button class="btn" type=submit name=show>Посмотреть
+   <button .btn type=submit name=add>Добавить 
+   <button .btn type=submit name=show>Посмотреть

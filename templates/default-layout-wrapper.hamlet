@@ -24,20 +24,20 @@
     <body>
         <div class="container">
             <header>
-              <h1> <div style="cursor:pointer" onclick="location.href='@{HomeR}'"> <h1> Gentoo.Ru fortunes
+            <div style="cursor:pointer" onclick="location.href='@{HomeR}'"> <h1> Gentoo.Ru fortunes </h1>
               <p> Цитаты с форума 
                      <a href="http://gentoo.ru/forum">gentoo.ru 
                      и из <a href="xmpp://gentoo@conference.gentoo.ru">xmpp:gentoo@conference.gentoo.ru</a>
               <h3>
-                <ul class="nav nav-pills">
+                <ul .nav .nav-pills>
                     $forall (cType,cUrl) <- navbar 
                        $if isCurrent cUrl
-                        <li class="active">
+                        <li .active>
                             <a href=@{cUrl}>#{cType}
                        $else 
                         <li>
                             <a href=@{cUrl}>#{cType}
-            <div id="main" role="main">
+            <div #main role="main">
               ^{pageBody pc}
             <footer>
                 <div style="float: right;">

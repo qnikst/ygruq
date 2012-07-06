@@ -5,18 +5,18 @@ $nothing
             <form class="well form-search" style="margin-bottom:10px" action=@{fst p} method=get>
                 Поиск: <input type="text" class="input-medium search-query" value="" name=search>
                 <input type=hidden value=1 name=all>
-                <button type=submit class="btn"><i class="icon-search"></i>
+                <button type=submit .btn><i class="icon-search"></i>
             $maybe pager <- pager
                 <a href=@{fst p}?all=1>
-                    <button class="btn">
+                    <button .btn>
                         <small>На одной странице</small>
                 ^{pager}
             $nothing
                 <a href=@?{p}>
-                    <button class="btn">
+                    <button .btn>
                         <small>По 10 на страницу</small>
 
-<div class="container">
+<div .container>
     $maybe _ <- maid
       <form action=@{QuoteAbyssProcessR} method=post>
         $forall Entity quoteId quote <- quotes
