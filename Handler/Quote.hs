@@ -112,7 +112,7 @@ quoteList :: QuotePage -> Handler RepHtml
 quoteList quotepage   = do
     search <- runInputGet $ iopt textField "search"
     let q = (QuoteApproved ==. isApproved quotepage):(searchQ search)
-        s = [Desc QuoteTemestamp]
+        s = [Desc QuoteTimestamp]
     (page,onOne) <- runInputGet $ (,) <$> iopt intField "page" <*> iopt intField "all"
     maid <- case quotepage of
               Abyss -> maybeAuth
