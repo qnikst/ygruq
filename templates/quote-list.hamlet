@@ -1,30 +1,34 @@
 $maybe _ <- search
-    $maybe pager <- pager
-        ^{pager}
 $nothing
     $with mp <- lookup quotepage pages
         $maybe p <- mp
-            <form action=@?{p} method=get>
-                Поиск: <input type=text value="" name=search>
-                <input type=submit value=&gt;>
+            <form class="well form-search" style="margin-bottom:10px" action=@{fst p} method=get>
+                Поиск: <input type="text" class="input-medium search-query" value="" name=search>
+                <input type=hidden value=1 name=all>
+                <button type=submit class="btn"><i class="icon-search"></i>
             $maybe pager <- pager
-                <a href=@{fst p}?all=1><small>На одной странице</small></a>
+                <a href=@{fst p}?all=1>
+                    <button class="btn">
+                        <small>На одной странице</small>
                 ^{pager}
             $nothing
-                <a href=@?{p}><small>По 10 на страницу</small></a>
+                <a href=@?{p}>
+                    <button class="btn">
+                        <small>По 10 на страницу</small>
 
-$maybe _ <- maid
-  <form action=@{QuoteAbyssProcessR} method=post>
-    $forall Entity quoteId quote <- quotes
-        <input type=checkbox name=abyss value=#{toPathPiece quoteId}>
-        ^{showQuote quoteId quote}
-    <div>
-      <input type=submit name=delete value=Удалить> 
-      <input type=submit name=approve value=Опубликовать>
-$nothing
-  \
-    $forall Entity quoteId quote <- quotes
-        ^{showQuote quoteId quote}
+<div class="container">
+    $maybe _ <- maid
+      <form action=@{QuoteAbyssProcessR} method=post>
+        $forall Entity quoteId quote <- quotes
+            <input type=checkbox name=abyss value=#{toPathPiece quoteId}>
+            ^{showQuote quoteId quote}
+        <div>
+          <input type=submit name=delete value=Удалить> 
+          <input type=submit name=approve value=Опубликовать>
+    $nothing
+      \
+        $forall Entity quoteId quote <- quotes
+            ^{showQuote quoteId quote}
 
 $maybe pager <- pager
     ^{pager}
