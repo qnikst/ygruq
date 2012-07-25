@@ -4,6 +4,8 @@
 /quote/abyss/         AbyssListR     GET
 /quote/abyss/process  QuoteAbyssProcessR  POST
 /quote/rss	          QuoteFeedR            GET
+/logendar             LogendarR           GET
+/gcr-logs             RedirectR           GET
 
 /static StaticR Static getStatic
 /auth   AuthR   Auth   getAuth
