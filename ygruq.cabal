@@ -32,6 +32,7 @@ library
                      Settings.Development
                      Handler.Home
                      Handler.Quote
+                     Handler.Logendar
                      Yesod.Pagination
 
     if flag(dev) || flag(library-only)
