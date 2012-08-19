@@ -1,0 +1,4 @@
+<form .well method=get action=@{RedirectR}>
+   ^{formWidget}
+   <button .btn type="submit">Читать!
+

@@ -8,13 +8,15 @@ $nothing
                 <button type=submit .btn><i class="icon-search"></i>
             $maybe pager <- pager
                 <a href=@{fst p}?all=1>
-                    <button .btn>
+                    <button .btn style="float: right;">
                         <small>На одной странице</small>
                 ^{pager}
             $nothing
                 <a href=@?{p}>
-                    <button .btn>
+                    <button .btn style="float:right;">
                         <small>По 10 на страницу</small>
+                <br>
+                <br>
 
 <div .container>
     $maybe _ <- maid
