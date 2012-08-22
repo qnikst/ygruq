@@ -184,6 +184,7 @@ getQuoteFeedR = do
         , feedLanguage = "ru"
         , feedUpdated  = (quoteTimestamp $ entityVal $ head $ quotes)
         , feedEntries  =  (map toFeed quotes)
+        , feedAuthor   = "gentoo.ru"
         }
     where
         toFeed (Entity i q) = 

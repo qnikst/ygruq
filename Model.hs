@@ -5,7 +5,6 @@ import Yesod
 import Data.Text (Text)
 import Data.Time
 import Database.Persist.Quasi
-import Text.Blaze
 
 data LinkSource = Gru | GruConf | JRuConf | RuMail | RuWiki | OtherSource
                 | Awesome

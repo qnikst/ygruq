@@ -36,10 +36,10 @@ infixr 5 <>
 #endif
 
 showTime :: UTCTime -> Text
-showTime  utc   = 
-    let (y,m,d) = getL gregorian utc
-        h       = getL hours     utc
-        i       = getL minutes   utc
+showTime  utc'   = 
+    let (y,m,d) = getL gregorian utc'
+        h       = getL hours     utc'
+        i       = getL minutes   utc'
     in pack $ printf "%04d-%02d-%02d %02d:%02d" y m d h i 
 
 -- | Menu

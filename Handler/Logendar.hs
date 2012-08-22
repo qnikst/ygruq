@@ -33,7 +33,8 @@ datePickerAttrs day =
 
 confField :: Field App App Text
 confField = selectFieldList conferenceUrls
-                where conferenceUrls = [ ("gentoo@c.g.r", "gentoo")
+                where conferenceUrls :: [ (Text, Text) ]
+                      conferenceUrls = [ ("gentoo@c.g.r", "gentoo")
                                        , ("python@c.g.r", "python")
                                        , ("awesome@c.g.r", "awesome")
                                        ]
